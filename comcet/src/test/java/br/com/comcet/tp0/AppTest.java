@@ -1,6 +1,9 @@
 package br.com.comcet.tp0;
 
 import org.junit.jupiter.api.Test;
+
+import br.com.comcet.App;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import static org.junit.jupiter.api.Assertions.assertTrue;
