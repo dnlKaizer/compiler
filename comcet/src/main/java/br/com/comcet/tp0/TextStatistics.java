@@ -21,26 +21,4 @@ public static final TextStatistics EMPTY = new TextStatistics(0, 0, '\0', "");
                 "Frequente: " + mostFrequentWord;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        TextStatistics that = (TextStatistics) o;
-
-        if (!numLetters.equals(that.numLetters)) return false;
-        if (!numWords.equals(that.numWords)) return false;
-        if (!mostFrequentLetter.equals(that.mostFrequentLetter)) return false;
-        return mostFrequentWord.equals(that.mostFrequentWord);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = numLetters.hashCode();
-        result = 31 * result + numWords.hashCode();
-        result = 31 * result + mostFrequentLetter.hashCode();
-        result = 31 * result + mostFrequentWord.hashCode();
-        return result;
-    }
-
 }
