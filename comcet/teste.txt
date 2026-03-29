@@ -1,1 +1,6 @@
-Compiladores sao divertidos
+var a : string;
+{
+    to testando uai
+    é teste
+}
+a := 'TESTE\n\'UAU\'';
