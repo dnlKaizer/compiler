@@ -2,13 +2,16 @@ package br.com.comcet.tp1.ast.expression;
 
 import java.util.Objects;
 
+import br.com.comcet.tp1.ast.type.OperatorType;
+import br.com.comcet.tp1.ast.type.VariableType;
+
 public class BinaryExpression extends Expression {
     private final Expression left;
     private final Expression right;
-    private final String operator;
+    private final OperatorType operator;
 
-    public BinaryExpression(int line, int column, Expression left, Expression right, String operator) {
-        super(line, column);
+    public BinaryExpression(int line, int column, Expression left, Expression right, OperatorType operator, VariableType returnType) {
+        super(line, column, returnType);
 
         Objects.requireNonNull(left, "Expressão à esquerda não pode ser nula.");
         Objects.requireNonNull(right, "Expressão à direita não pode ser nula.");
@@ -20,8 +23,8 @@ public class BinaryExpression extends Expression {
     }
 
     // Construtor para testes
-    public BinaryExpression(Expression left, Expression right, String operator) {
-        this(1, 1, left, right, operator);
+    public BinaryExpression(Expression left, Expression right, OperatorType operator, VariableType returnType) {
+        this(1, 1, left, right, operator, returnType);
     }
 
     public Expression getLeft() {
@@ -32,15 +35,34 @@ public class BinaryExpression extends Expression {
         return right;
     }
 
-    public String getOperator() {
+    public OperatorType getOperator() {
         return operator;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(left.toString()).append(" ").append(operator).append(" ").append(right.toString());
+        appendExpression(sb, left);
+        sb.append(" ").append(operator).append(" ");
+        appendExpression(sb, right);
         return sb.toString();
+    }
+
+    private void appendExpression(StringBuilder sb, Expression expr) {
+        if (needsParentheses(expr)) {
+            sb.append("(").append(expr.toString()).append(")");
+        } else {
+            sb.append(expr.toString());
+        }
+    }
+
+    private boolean needsParentheses(Expression child) {
+        if (!(child instanceof BinaryExpression)) {
+            return false;
+        }
+
+        BinaryExpression childBinary = (BinaryExpression) child;
+        return childBinary.operator.getPrecedence() > this.operator.getPrecedence();
     }
 
 }

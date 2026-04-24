@@ -6,13 +6,13 @@ import java.util.Objects;
 
 import br.com.comcet.tp1.ast.command.Command;
 import br.com.comcet.tp1.ast.expression.Identifier;
-import br.com.comcet.tp1.ast.type.Type;
+import br.com.comcet.tp1.ast.type.VariableType;
 
 public class VariableDeclaration extends Command {
     private final List<Identifier> identifiers;
-    private final Type type;
+    private final VariableType type;
 
-    public VariableDeclaration(int line, int column, List<Identifier> identifiers, Type type) {
+    public VariableDeclaration(int line, int column, List<Identifier> identifiers, VariableType type) {
         super(line, column);
 
         Objects.requireNonNull(identifiers, "Lista de identificadores não pode ser nula.");
@@ -24,7 +24,7 @@ public class VariableDeclaration extends Command {
     }
 
     // Construtor para testes
-    public VariableDeclaration(List<Identifier> identifiers, Type type) {
+    public VariableDeclaration(List<Identifier> identifiers, VariableType type) {
         this(1, 1, identifiers, type);
     }
 
@@ -32,7 +32,7 @@ public class VariableDeclaration extends Command {
         return Collections.unmodifiableList(identifiers);
     }
 
-    public Type getType() {
+    public VariableType getType() {
         return type;
     }
 

@@ -26,7 +26,13 @@ public class KeywordIdentifier {
         keywords.put("begin", TokenType.BEGIN);
         keywords.put("end", TokenType.END);
 
+        keywords.put("and", TokenType.AND);
+        keywords.put("or", TokenType.OR);
+        keywords.put("not", TokenType.NOT);
+        keywords.put("xor", TokenType.XOR);
+
         keywords.put("var", TokenType.VAR);
+        keywords.put("program", TokenType.PROGRAM);
 
         keywords.put("true", TokenType.BOOLEAN_LITERAL);
         keywords.put("false", TokenType.BOOLEAN_LITERAL);

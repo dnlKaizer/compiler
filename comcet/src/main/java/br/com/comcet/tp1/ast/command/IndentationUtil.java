@@ -10,9 +10,6 @@ public final class IndentationUtil {
     public final static String NEWLINE = System.getProperty("line.separator", "\n");
 
     public static String indentCommand(Command command) {
-        if (command instanceof BlockCommand) {
-            return command.toString();
-        }
         return indent(command.toString());
     }
 

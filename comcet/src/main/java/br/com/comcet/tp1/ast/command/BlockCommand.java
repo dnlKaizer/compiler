@@ -34,7 +34,7 @@ public class BlockCommand extends Command {
         for (int i = 0; i < commands.size(); i++) {
             sb.append(IndentationUtil.indentCommand(commands.get(i))).append(br);
         }
-        sb.append("end").append(br);
+        sb.append("end");
 
         return sb.toString();
     }

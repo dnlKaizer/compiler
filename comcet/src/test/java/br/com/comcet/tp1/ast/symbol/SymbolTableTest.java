@@ -5,8 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
-import br.com.comcet.tp1.ast.expression.Identifier;
-import br.com.comcet.tp1.ast.type.Type;
+import br.com.comcet.tp1.ast.type.VariableType;
 import br.com.comcet.tp1.symbol.Symbol;
 import br.com.comcet.tp1.symbol.SymbolTable;
 
@@ -14,8 +13,7 @@ public class SymbolTableTest {
     @Test
     void testAddGet() {
         String test = "x";
-        Identifier id = new Identifier(test);
-        Symbol symbol = new Symbol(id, Type.BOOLEAN, null);
+        Symbol symbol = new Symbol(test, VariableType.BOOLEAN, null);
         
         SymbolTable symbolTable = new SymbolTable();
         symbolTable.addSymbol(symbol);
@@ -27,13 +25,12 @@ public class SymbolTableTest {
     @Test
     void testDuplicate() {
         String test = "x";
-        Identifier id = new Identifier(test);
-        Symbol symbol = new Symbol(id, Type.BOOLEAN, null);
+        Symbol symbol = new Symbol(test, VariableType.BOOLEAN, null);
         
         SymbolTable symbolTable = new SymbolTable();
         symbolTable.addSymbol(symbol);
 
-        Symbol symbolCopy = new Symbol(id, Type.BOOLEAN, null);
+        Symbol symbolCopy = new Symbol(test, VariableType.BOOLEAN, null);
         assertThrows(IllegalArgumentException.class, () -> {
             symbolTable.addSymbol(symbolCopy);
         });
