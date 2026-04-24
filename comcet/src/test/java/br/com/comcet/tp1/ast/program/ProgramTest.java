@@ -13,7 +13,8 @@ import br.com.comcet.tp1.ast.command.BlockCommand;
 import br.com.comcet.tp1.ast.command.PrintCommand;
 import br.com.comcet.tp1.ast.command.WhileCommand;
 import br.com.comcet.tp1.ast.declaration.VariableDeclaration;
-import br.com.comcet.tp1.ast.type.Type;
+import br.com.comcet.tp1.ast.type.OperatorType;
+import br.com.comcet.tp1.ast.type.VariableType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -23,10 +24,10 @@ public class ProgramTest {
     @Test
     void testSumAssignment() {
         // Representando: x := 10 + 5;
-        Expression dez = new Literal(10);
-        Expression cinco = new Literal(5);
-        Expression soma = new BinaryExpression(dez, cinco, "+");
-        Command atrib = new AssignmentCommand(new Identifier("x"), soma);
+        Expression dez = new Literal(10, VariableType.INTEGER);
+        Expression cinco = new Literal(5, VariableType.INTEGER);
+        Expression soma = new BinaryExpression(dez, cinco, OperatorType.SUM, VariableType.INTEGER);
+        Command atrib = new AssignmentCommand(new Identifier("x", VariableType.INTEGER), soma);
 
         assertTrue(atrib instanceof AssignmentCommand);
         AssignmentCommand assign = (AssignmentCommand) atrib;
@@ -34,7 +35,7 @@ public class ProgramTest {
 
         assertTrue(assign.getExpression() instanceof BinaryExpression);
         BinaryExpression binary = (BinaryExpression) assign.getExpression();
-        assertEquals("+", binary.getOperator());
+        assertEquals(OperatorType.SUM, binary.getOperator());
         assertTrue(binary.getLeft() instanceof Literal);
         assertTrue(binary.getRight() instanceof Literal);
 
@@ -56,14 +57,14 @@ public class ProgramTest {
         assertEquals(2, decl1.getIdentifiers().size());
         assertEquals("x", decl1.getIdentifiers().get(0).getName());
         assertEquals("y", decl1.getIdentifiers().get(1).getName());
-        assertEquals(Type.INTEGER, decl1.getType());
+        assertEquals(VariableType.INTEGER, decl1.getType());
         
         // Segunda declaração: a, b : string
         VariableDeclaration decl2 = program.getDeclarations().get(1);
         assertEquals(2, decl2.getIdentifiers().size());
         assertEquals("a", decl2.getIdentifiers().get(0).getName());
         assertEquals("b", decl2.getIdentifiers().get(1).getName());
-        assertEquals(Type.STRING, decl2.getType());
+        assertEquals(VariableType.STRING, decl2.getType());
         
         // Verificar body
         assertTrue(program.getBody() instanceof BlockCommand);

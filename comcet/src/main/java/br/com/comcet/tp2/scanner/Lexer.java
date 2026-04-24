@@ -141,12 +141,12 @@ public class Lexer implements IScanner {
             charStream.next();
             return new Token(SymbolIdentifier.identify(doubleOperator), doubleOperator, line, column);
         }
-
+        
         if (SymbolIdentifier.isSymbol(singleOperator)) {
             return new Token(SymbolIdentifier.identify(singleOperator), singleOperator, line, column);
         }
-
-        throw new LexicalException("Caractere inválido", line, column);
+        
+        throw new LexicalException("Caractere inválido: " + firstChar, line, column);
     }
 
 }

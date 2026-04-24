@@ -12,7 +12,8 @@ import br.com.comcet.tp1.ast.expression.BinaryExpression;
 import br.com.comcet.tp1.ast.expression.Identifier;
 import br.com.comcet.tp1.ast.expression.Literal;
 import br.com.comcet.tp1.ast.program.Program;
-import br.com.comcet.tp1.ast.type.Type;
+import br.com.comcet.tp1.ast.type.OperatorType;
+import br.com.comcet.tp1.ast.type.VariableType;
 
 public class AstCreator {
     
@@ -38,39 +39,39 @@ public class AstCreator {
         //     write(b);
         // end
 
-        Identifier x = new Identifier("x");
-        Identifier y = new Identifier("y");
-        Identifier a = new Identifier("a");
-        Identifier b = new Identifier("b");
+        Identifier x = new Identifier("x", VariableType.INTEGER);
+        Identifier y = new Identifier("y", VariableType.INTEGER);
+        Identifier a = new Identifier("a", VariableType.STRING);
+        Identifier b = new Identifier("b", VariableType.STRING);
 
         List<Identifier> identifiers = List.of(x, y);
         List<Identifier> identifiersAb = List.of(a, b);
-        VariableDeclaration varDecl = new VariableDeclaration(identifiers, Type.INTEGER);
-        VariableDeclaration varDeclAb = new VariableDeclaration(identifiersAb, Type.STRING);
+        VariableDeclaration varDecl = new VariableDeclaration(identifiers, VariableType.INTEGER);
+        VariableDeclaration varDeclAb = new VariableDeclaration(identifiersAb, VariableType.STRING);
 
-        Literal l0 = new Literal(0);
-        Literal l1 = new Literal(1);
-        Literal l2 = new Literal(2);
-        Literal l3 = new Literal(3);
-        Literal l5 = new Literal(5);
+        Literal l0 = new Literal(0, VariableType.INTEGER);
+        Literal l1 = new Literal(1, VariableType.INTEGER);
+        Literal l2 = new Literal(2, VariableType.INTEGER);
+        Literal l3 = new Literal(3, VariableType.INTEGER);
+        Literal l5 = new Literal(5, VariableType.INTEGER);
 
         AssignmentCommand assignX = new AssignmentCommand(x, l5);
         AssignmentCommand assignY = new AssignmentCommand(y, l2);
 
         PrintCommand printX = new PrintCommand(x);
 
-        BinaryExpression x_2 = new BinaryExpression(x, l2, "*");
-        BinaryExpression y_x_2 = new BinaryExpression(y, x_2, "+");
+        BinaryExpression x_2 = new BinaryExpression(x, l2, OperatorType.MULT, VariableType.INTEGER);
+        BinaryExpression y_x_2 = new BinaryExpression(y, x_2, OperatorType.SUM, VariableType.INTEGER);
         AssignmentCommand assignY_x_2 = new AssignmentCommand(y, y_x_2);
 
-        BinaryExpression ifCondition = new BinaryExpression(x, l3, "=");
+        BinaryExpression ifCondition = new BinaryExpression(x, l3, OperatorType.EQUAL, VariableType.BOOLEAN);
         IfCommand ifCommand = new IfCommand(ifCondition, printX, assignY_x_2);
 
-        BinaryExpression x_1 = new BinaryExpression(x, l1, "-");
+        BinaryExpression x_1 = new BinaryExpression(x, l1, OperatorType.SUB, VariableType.INTEGER);
         AssignmentCommand assignX_1 = new AssignmentCommand(x, x_1);
 
         BlockCommand whileBody = new BlockCommand(List.of(ifCommand, assignX_1));
-        BinaryExpression whileCondition = new BinaryExpression(x, l0, ">");
+        BinaryExpression whileCondition = new BinaryExpression(x, l0, OperatorType.GREATER_THAN, VariableType.BOOLEAN);
         WhileCommand whileCommand = new WhileCommand(whileCondition, whileBody);
 
         PrintCommand printY = new PrintCommand(y);

@@ -1,6 +1,28 @@
-var a : string;
-{
-    to testando uai
-    é teste
-}
-a := 'TESTE\n\'UAU\'';
+program TESTE;
+
+var 
+    name : string;
+    number : integer;
+    p, q : boolean;
+
+begin
+    name := 'Danilo';
+    number := (15 + 24 - 8 - 15 * 1) * 3 / 3;
+
+    p := true;
+    q := false;
+
+    if (p or q) then
+        begin
+            number := 123;
+        end
+    else
+        begin
+            number := 321;
+        end
+
+    while (p) do
+        p := q;
+
+    repeat p := not p; until (p)
+end
