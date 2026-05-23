@@ -1,9 +1,18 @@
 package br.com.comcet.tp1.ast.type;
 
+import java.util.HashMap;
+
 import br.com.comcet.tp1.token.Token;
 
 public enum VariableType {
     STRING("string"), INTEGER("integer"), BOOLEAN("boolean");
+
+    private static final HashMap<String, VariableType> BY_STRING = new HashMap<>();
+    static {
+        for (VariableType vt : values()) {
+            BY_STRING.put(vt.name, vt);
+        }
+    }
 
     private final String name;
 
@@ -22,6 +31,10 @@ public enum VariableType {
             default:
                 throw new IllegalArgumentException("Token não é um literal válido para inferência de tipo.");
         }
+    }
+
+    public static VariableType fromString(String str) {
+        return BY_STRING.get(str.toLowerCase());
     }
 
     public boolean supportsOperations() {

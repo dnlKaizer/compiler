@@ -1,4 +1,4 @@
-package br.com.comcet.tp02.scanner;
+package br.com.comcet.tp2.scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import br.com.comcet.tp1.token.Token;
 import br.com.comcet.tp1.token.TokenType;
 import br.com.comcet.tp2.exception.LexicalException;
-import br.com.comcet.tp2.scanner.Lexer;
 import br.com.comcet.tp2.scanner.charstream.StringCharStream;
 
 public class LexerTest {

@@ -1,6 +1,7 @@
 package br.com.comcet.tp1.ast.type;
 
 import java.util.EnumMap;
+import java.util.HashMap;
 
 import br.com.comcet.tp1.token.TokenType;
 
@@ -29,9 +30,11 @@ public enum OperatorType {
     LESS_EQUAL("<=", 3, TokenType.LESS_EQUAL);
 
     private static final EnumMap<TokenType, OperatorType> BY_TOKEN = new EnumMap<>(TokenType.class);
+    private static final HashMap<String, OperatorType> BY_STRING = new HashMap<>();
     static {
         for (OperatorType op : values()) {
             BY_TOKEN.put(op.tokenType, op);
+            BY_STRING.put(op.symbol, op);
         }
     }
 
@@ -72,6 +75,10 @@ public enum OperatorType {
 
     public static OperatorType fromTokenType(TokenType tokenType) {
         return BY_TOKEN.get(tokenType);
+    }
+
+    public static OperatorType fromString(String symbol) {
+        return BY_STRING.get(symbol);
     }
 
     public static boolean isOperator(TokenType tokenType) {

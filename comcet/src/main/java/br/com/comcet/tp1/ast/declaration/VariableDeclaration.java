@@ -16,8 +16,8 @@ public class VariableDeclaration extends Command {
         super(line, column);
 
         Objects.requireNonNull(identifiers, "Lista de identificadores não pode ser nula.");
-        Objects.requireNonNull(type, "Tipo de variável não pode ser nulo.");
         identifiers.forEach(id -> Objects.requireNonNull(id, "Identificador na lista não pode ser nulo."));
+        Objects.requireNonNull(type, "Tipo da variável não pode ser nulo.");
 
         this.identifiers = identifiers;
         this.type = type;
@@ -43,7 +43,6 @@ public class VariableDeclaration extends Command {
             if (i > 0) sb.append(", ");
             sb.append(identifiers.get(i).toString());
         }
-        sb.append(" : ").append(type.toString());
         return sb.toString();
     }
 
