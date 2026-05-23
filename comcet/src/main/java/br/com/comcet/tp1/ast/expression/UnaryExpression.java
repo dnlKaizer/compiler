@@ -3,14 +3,13 @@ package br.com.comcet.tp1.ast.expression;
 import java.util.Objects;
 
 import br.com.comcet.tp1.ast.type.OperatorType;
-import br.com.comcet.tp1.ast.type.VariableType;
 
 public class UnaryExpression extends Expression {
     private final Expression expression;
     private final OperatorType operator;
 
-    public UnaryExpression(int line, int column, Expression expression, OperatorType operator, VariableType returnType) {
-        super(line, column, returnType);
+    public UnaryExpression(int line, int column, Expression expression, OperatorType operator) {
+        super(line, column);
 
         Objects.requireNonNull(expression, "Expressão não pode ser nula.");
         Objects.requireNonNull(operator, "Operador não pode ser nulo.");
@@ -20,8 +19,8 @@ public class UnaryExpression extends Expression {
     }
 
     // Construtor para testes
-    public UnaryExpression(Expression expression, OperatorType operator, VariableType returnType) {
-        this(1, 1, expression, operator, returnType);
+    public UnaryExpression(Expression expression, OperatorType operator) {
+        this(1, 1, expression, operator);
     }
 
     public Expression getExpression() {

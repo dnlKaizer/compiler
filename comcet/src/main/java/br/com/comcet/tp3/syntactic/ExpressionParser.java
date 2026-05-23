@@ -3,13 +3,13 @@ package br.com.comcet.tp3.syntactic;
 import br.com.comcet.tp1.ast.expression.BinaryExpression;
 import br.com.comcet.tp1.ast.expression.Expression;
 import br.com.comcet.tp1.ast.expression.Identifier;
-import br.com.comcet.tp1.ast.expression.Literal;
+import br.com.comcet.tp1.ast.expression.LiteralBoolean;
+import br.com.comcet.tp1.ast.expression.LiteralInteger;
+import br.com.comcet.tp1.ast.expression.LiteralString;
 import br.com.comcet.tp1.ast.expression.UnaryExpression;
 import br.com.comcet.tp1.ast.type.OperatorType;
-import br.com.comcet.tp1.ast.type.VariableType;
 import br.com.comcet.tp1.token.TokenType;
 import br.com.comcet.tp3.exception.SintaxException;
-import br.com.comcet.tp3.semantic.SemanticValidation;
 
 public class ExpressionParser {
 
@@ -21,9 +21,8 @@ public class ExpressionParser {
             input.advance();
 
             Expression right = parseTerm(input);
-            VariableType returnType = SemanticValidation.validateBinaryExpressionReturnType(right, left, operator);
 
-            left = new BinaryExpression(left.getLine(), left.getColumn(), left, right, operator, returnType);
+            left = new BinaryExpression(left.getLine(), left.getColumn(), left, right, operator);
             operator = OperatorType.fromTokenType(input.getCurrentTokenType());
         }
 
@@ -38,9 +37,8 @@ public class ExpressionParser {
             input.advance();
 
             Expression right = parseFactor(input);
-            VariableType returnType = SemanticValidation.validateBinaryExpressionReturnType(right, left, operator);
 
-            left = new BinaryExpression(left.getLine(), left.getColumn(), left, right, operator, returnType);
+            left = new BinaryExpression(left.getLine(), left.getColumn(), left, right, operator);
             operator = OperatorType.fromTokenType(input.getCurrentTokenType());
         }
 
@@ -54,11 +52,17 @@ public class ExpressionParser {
                 input.advance();
                 return id;
             case INTEGER_LITERAL:
-            case STRING_LITERAL:
-            case BOOLEAN_LITERAL:
-                Literal lit = new Literal(input.getCurrentToken());
+                LiteralInteger litInt = LiteralInteger.of(input.getCurrentToken());
                 input.advance();
-                return lit;
+                return litInt;
+            case STRING_LITERAL:
+                LiteralString litStr = LiteralString.of(input.getCurrentToken());
+                input.advance();
+                return litStr;
+            case BOOLEAN_LITERAL:
+                LiteralBoolean litBool = LiteralBoolean.of(input.getCurrentToken());
+                input.advance();
+                return litBool;
             case LPAREN:
                 input.advance();
                 Expression expr = parseExpression(input);
@@ -71,8 +75,7 @@ public class ExpressionParser {
                 int column = input.getCurrentColumn();
                 input.advance();
                 Expression factor = parseFactor(input);
-                VariableType returnType = SemanticValidation.validateUnaryExpressionReturnType(factor, operator);
-                return new UnaryExpression(line, column, factor, operator, returnType);
+                return new UnaryExpression(line, column, factor, operator);
             default:
                 throw new SintaxException("Fator não reconhecido: " + input.getCurrentTokenType(),
                         input.getCurrentLine(), input.getCurrentColumn());

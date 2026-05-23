@@ -16,7 +16,6 @@ import br.com.comcet.tp1.token.TokenType;
 import br.com.comcet.tp3.exception.ExceptionQueue;
 import br.com.comcet.tp3.exception.CompilerException;
 import br.com.comcet.tp3.exception.SintaxException;
-import br.com.comcet.tp3.semantic.SemanticValidation;
 
 public class CommandParser {
 
@@ -81,7 +80,6 @@ public class CommandParser {
         input.matchAndAdvance(TokenType.LPAREN);
 
         Expression condition = ExpressionParser.parseExpression(input);
-        SemanticValidation.validateConditionExpression(condition);
 
         input.matchAndAdvance(TokenType.RPAREN);
         input.matchAndAdvance(TokenType.THEN);
@@ -108,7 +106,6 @@ public class CommandParser {
         input.matchAndAdvance(TokenType.LPAREN);
 
         Expression condition = ExpressionParser.parseExpression(input);
-        SemanticValidation.validateConditionExpression(condition);
 
         input.matchAndAdvance(TokenType.RPAREN);
         input.matchAndAdvance(TokenType.DO);
@@ -131,7 +128,6 @@ public class CommandParser {
         input.matchAndAdvance(TokenType.UNTIL);
 
         Expression condition = ExpressionParser.parseExpression(input);
-        SemanticValidation.validateConditionExpression(condition);
 
         return new RepeatCommand(line, column, condition, body);
     }
@@ -144,7 +140,6 @@ public class CommandParser {
         input.matchAndAdvance(TokenType.ASSIGN);
 
         Expression expression = ExpressionParser.parseExpression(input);
-        SemanticValidation.validateAssignmentCompatibility(id, expression);
 
         input.matchAndAdvance(TokenType.SEMICOLON);
 

@@ -47,9 +47,9 @@ class ParserIntegrationTest {
         Program program = parse(code);
 
         assertEquals("sample", program.getName());
-        assertEquals(1, program.getDeclarations().size());
+        assertEquals(1, program.getDeclarations().getVariableDeclarations().size());
 
-        VariableDeclaration declaration = program.getDeclarations().get(0);
+        VariableDeclaration declaration = program.getDeclarations().getVariableDeclarations().get(0);
         assertEquals(2, declaration.getIdentifiers().size());
 
         BlockCommand block = assertInstanceOf(BlockCommand.class, program.getBody());
