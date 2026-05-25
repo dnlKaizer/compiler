@@ -52,25 +52,35 @@ public enum OperatorType {
         return precedence;
     }
 
-    public boolean isArithmetic() {
-        return this == SUM || this == SUB || this == MULT || this == DIV;
+    public boolean supportsUnaryOperation(VariableType operandType) {
+        if (this == NOT) {
+            return operandType == VariableType.BOOLEAN;
+        }
+        return false;
     }
 
-    public boolean isRelational() {
-        return this == NOT_EQUAL || this == EQUAL || isComparison();
+    public boolean supportsBinaryOperation(VariableType leftType, VariableType rightType) {
+        boolean isSameType = leftType == rightType;
+        return switch (this) {
+            case MULT, DIV, SUM, SUB ->
+                (isSameType && rightType == VariableType.INTEGER);
+            case AND, OR, XOR ->
+                (isSameType && rightType == VariableType.BOOLEAN);
+            case EQUAL, NOT_EQUAL -> (isSameType &&
+                (rightType == VariableType.INTEGER || rightType == VariableType.BOOLEAN));
+            case GREATER_THAN, LESS_THAN, GREATER_EQUAL, LESS_EQUAL ->
+                (isSameType && rightType == VariableType.INTEGER);
+            default -> false;
+        };
     }
 
-    public boolean isEquality() {
-        return this == NOT_EQUAL || this == EQUAL;
-    }
-
-    public boolean isComparison() {
-        return this == LESS_THAN || this == GREATER_THAN ||
-                this == GREATER_EQUAL || this == LESS_EQUAL;
-    }
-
-    public boolean isLogicalBinary() {
-        return this == AND || this == OR || this == XOR;
+    public VariableType getReturnType() {
+        return switch (this) {
+            case MULT, DIV, SUM, SUB -> VariableType.INTEGER;
+            case NOT, AND, OR, XOR, EQUAL, NOT_EQUAL, GREATER_THAN,
+                LESS_THAN, GREATER_EQUAL, LESS_EQUAL -> VariableType.BOOLEAN;
+            default -> throw new IllegalStateException("Operador desconhecido: " + this);
+        };
     }
 
     public static OperatorType fromTokenType(TokenType tokenType) {

@@ -35,7 +35,7 @@ public class AssignmentCommand extends Command {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(id.toString()).append(" := ").append(expression.toString()).append(";");
+        sb.append(id.toString()).append(" := ").append(expression.toString());
         return sb.toString();
     }
 

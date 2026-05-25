@@ -3,16 +3,22 @@ package br.com.comcet.tp4;
 import java.util.List;
 
 import br.com.comcet.tp1.ast.AstNode;
+import br.com.comcet.tp1.ast.argument.Arguments;
 import br.com.comcet.tp1.ast.command.AssignmentCommand;
 import br.com.comcet.tp1.ast.command.BlockCommand;
+import br.com.comcet.tp1.ast.command.CallCommand;
 import br.com.comcet.tp1.ast.command.Command;
 import br.com.comcet.tp1.ast.command.IfCommand;
 import br.com.comcet.tp1.ast.command.RepeatCommand;
 import br.com.comcet.tp1.ast.command.WhileCommand;
+import br.com.comcet.tp1.ast.declaration.ParametersDeclaration;
+import br.com.comcet.tp1.ast.declaration.SubroutineDeclaration;
+import br.com.comcet.tp1.ast.declaration.SubroutineDeclarations;
 import br.com.comcet.tp1.ast.declaration.VariableDeclaration;
 import br.com.comcet.tp1.ast.declaration.VariableDeclarations;
 import br.com.comcet.tp1.ast.expression.BinaryExpression;
 import br.com.comcet.tp1.ast.expression.Expression;
+import br.com.comcet.tp1.ast.expression.FunctionCallExpression;
 import br.com.comcet.tp1.ast.expression.Identifier;
 import br.com.comcet.tp1.ast.expression.LiteralBoolean;
 import br.com.comcet.tp1.ast.expression.LiteralInteger;
@@ -21,18 +27,24 @@ import br.com.comcet.tp1.ast.expression.UnaryExpression;
 import br.com.comcet.tp1.ast.program.Program;
 import br.com.comcet.tp1.ast.type.OperatorType;
 import br.com.comcet.tp1.ast.type.VariableType;
+import br.com.comcet.tp4.MiniPascalParser.ArgumentsContext;
 import br.com.comcet.tp4.MiniPascalParser.AssignmentCommandContext;
 import br.com.comcet.tp4.MiniPascalParser.BinaryExprContext;
 import br.com.comcet.tp4.MiniPascalParser.BlockCommandContext;
+import br.com.comcet.tp4.MiniPascalParser.CallCommandContext;
 import br.com.comcet.tp4.MiniPascalParser.CommandContext;
+import br.com.comcet.tp4.MiniPascalParser.FunctionCallContext;
 import br.com.comcet.tp4.MiniPascalParser.IdentifierContext;
 import br.com.comcet.tp4.MiniPascalParser.IfCommandContext;
 import br.com.comcet.tp4.MiniPascalParser.LitBoolContext;
 import br.com.comcet.tp4.MiniPascalParser.LitIntContext;
 import br.com.comcet.tp4.MiniPascalParser.LitStrContext;
+import br.com.comcet.tp4.MiniPascalParser.ParametersContext;
 import br.com.comcet.tp4.MiniPascalParser.ParenExprContext;
 import br.com.comcet.tp4.MiniPascalParser.ProgramContext;
 import br.com.comcet.tp4.MiniPascalParser.RepeatCommandContext;
+import br.com.comcet.tp4.MiniPascalParser.SubroutineDeclarationContext;
+import br.com.comcet.tp4.MiniPascalParser.SubroutineDeclarationsContext;
 import br.com.comcet.tp4.MiniPascalParser.UnaryExprContext;
 import br.com.comcet.tp4.MiniPascalParser.VarDeclarationContext;
 import br.com.comcet.tp4.MiniPascalParser.VarDeclarationsContext;
@@ -45,7 +57,7 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
         int line = ctx.getStart().getLine() + 1;
         int column = ctx.getStart().getCharPositionInLine() + 1;
 
-        Identifier id = new Identifier(ctx.ID().getText());
+        Identifier id = new Identifier(line, column, ctx.ID().getText());
         Expression expression = (Expression) visit(ctx.expression());
 
         return new AssignmentCommand(line, column, id, expression);
@@ -91,10 +103,17 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
         
         String name = ctx.ID().getText();
 
-        VariableDeclarations varDecls = (VariableDeclarations) visit(ctx.varDeclarations());
+        VariableDeclarations varDecls = ctx.varDeclarations() != null
+            ? (VariableDeclarations) visit(ctx.varDeclarations())
+            : new VariableDeclarations(line, column, List.of());
+        
+        SubroutineDeclarations subroutinesDecls = ctx.subroutineDeclarations() != null
+            ? (SubroutineDeclarations) visit(ctx.subroutineDeclarations())
+            : new SubroutineDeclarations(line, column, List.of());
+        
         BlockCommand block = (BlockCommand) visit(ctx.blockCommand());
 
-        return new Program(line, column, varDecls, block, name, null);
+        return new Program(line, column, varDecls, subroutinesDecls, block, name, null);
     }
 
     @Override
@@ -126,7 +145,7 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
         int column = ctx.getStart().getCharPositionInLine() + 1;
 
         List<Identifier> ids = ctx.ID().stream()
-            .map(idCtx -> new Identifier(idCtx.getText()))
+            .map(idCtx -> new Identifier(line, column, idCtx.getText()))
             .toList();
 
         VariableType type = VariableType.fromString(ctx.VAR_TYPE().getText());
@@ -146,6 +165,93 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
     }
 
     @Override
+    public AstNode visitSubroutineDeclarations(SubroutineDeclarationsContext ctx) {
+        int line = ctx.getStart().getLine() + 1;
+        int column = ctx.getStart().getCharPositionInLine() + 1;
+
+        List<SubroutineDeclaration> subroutineDeclarations = ctx.subroutineDeclaration().stream()
+            .map(subDeclCtx -> (SubroutineDeclaration) visit(subDeclCtx))
+            .toList();
+        
+        return new SubroutineDeclarations(line, column, subroutineDeclarations);
+    }
+
+    @Override
+    public AstNode visitSubroutineDeclaration(SubroutineDeclarationContext ctx) {
+        int line = ctx.getStart().getLine() + 1;
+        int column = ctx.getStart().getCharPositionInLine() + 1;
+
+        Identifier id = new Identifier(line, column, ctx.ID().getText());
+
+        ParametersDeclaration parameters = ctx.parameters() != null
+            ? (ParametersDeclaration) visit(ctx.parameters())
+            : new ParametersDeclaration(line, column, List.of());
+
+        VariableType returnType = ctx.VAR_TYPE() != null
+            ? VariableType.fromString(ctx.VAR_TYPE().getText())
+            : VariableType.VOID;
+
+        VariableDeclarations localVars = ctx.varDeclarations() != null
+            ? (VariableDeclarations) visit(ctx.varDeclarations())
+            : new VariableDeclarations(line, column, List.of());
+
+        BlockCommand body = (BlockCommand) visit(ctx.blockCommand());
+
+        return new SubroutineDeclaration(line, column, id, parameters, returnType, localVars, body);
+    }
+
+    @Override
+    public AstNode visitParameters(ParametersContext ctx) {
+        int line = ctx.getStart().getLine() + 1;
+        int column = ctx.getStart().getCharPositionInLine() + 1;
+
+        List<VariableDeclaration> parameters = ctx.varDeclaration().stream()
+            .map(paramCtx -> (VariableDeclaration) visit(paramCtx))
+            .toList();
+
+        return new ParametersDeclaration(line, column, parameters);
+    }
+
+    @Override
+    public AstNode visitCallCommand(CallCommandContext ctx) {
+        int line = ctx.getStart().getLine() + 1;
+        int column = ctx.getStart().getCharPositionInLine() + 1;
+
+        Identifier id = new Identifier(line, column, ctx.ID().getText());
+
+        Arguments arguments = ctx.arguments() == null ?
+            new Arguments(line, column, List.of()) :
+            (Arguments) visit(ctx.arguments());
+
+        return new CallCommand(line, column, id, arguments);
+    }
+
+    @Override
+    public AstNode visitArguments(ArgumentsContext ctx) {
+        int line = ctx.getStart().getLine() + 1;
+        int column = ctx.getStart().getCharPositionInLine() + 1;
+
+        List<Expression> arguments = ctx.expression().stream()
+            .map(exprCtx -> (Expression) visit(exprCtx))
+            .toList();
+        
+        return new Arguments(line, column, arguments);
+    }
+
+    @Override
+	public AstNode visitFunctionCall(FunctionCallContext ctx) {
+        int line = ctx.getStart().getLine() + 1;
+        int column = ctx.getStart().getCharPositionInLine() + 1;
+
+        Identifier id = new Identifier(line, column, ctx.ID().getText());
+        Arguments arguments = ctx.arguments() == null ?
+            new Arguments(line, column, List.of()) :
+            (Arguments) visit(ctx.arguments());
+
+        return new FunctionCallExpression(line, column, id, arguments);
+	}
+
+	@Override
     public AstNode visitBinaryExpr(BinaryExprContext ctx) {
         int line = ctx.getStart().getLine() + 1;
         int column = ctx.getStart().getCharPositionInLine() + 1;
@@ -209,9 +315,7 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
 
     @Override
     public AstNode visitParenExpr(ParenExprContext ctx) {
-        Expression expression = (Expression) visit(ctx.expression());
-
-        return expression; // Parênteses não criam um nó específico na AST
+        return (Expression) visit(ctx.expression());
     }
-    
+
 }

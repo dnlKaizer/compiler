@@ -5,7 +5,8 @@ import java.util.HashMap;
 import br.com.comcet.tp1.token.Token;
 
 public enum VariableType {
-    STRING("string"), INTEGER("integer"), BOOLEAN("boolean");
+    STRING("string"), INTEGER("integer"), BOOLEAN("boolean"),
+    VOID("void"), ERROR("error");
 
     private static final HashMap<String, VariableType> BY_STRING = new HashMap<>();
     static {
@@ -37,32 +38,9 @@ public enum VariableType {
         return BY_STRING.get(str.toLowerCase());
     }
 
-    public boolean supportsOperations() {
-        return supportsArithmetic() || supportsComparison() || supportsLogicalBinary() || supportsEquality();
-    }
-
-    public boolean supportsArithmetic() {
-        return this == INTEGER;
-    }
-
-    public boolean supportsComparison() {
-        return this == INTEGER;
-    }
-
-    public boolean supportsLogicalBinary() {
-        return this == BOOLEAN;
-    }
-
-    public boolean supportsEquality() {
-        return this == STRING || this == INTEGER || this == BOOLEAN;
-    }
-
-    public boolean isCompatibleWith(VariableType other) {
-        return this == other;
-    }
-
     @Override
     public String toString() {
         return this.name;
     }
+    
 }

@@ -39,7 +39,7 @@ public class ProgramTest {
         assertTrue(binary.getLeft() instanceof LiteralInteger);
         assertTrue(binary.getRight() instanceof LiteralInteger);
 
-        assertEquals("x := 10 + 5;", assign.toString());
+        assertEquals("x := 10 + 5", assign.toString());
     }
 
     @Test

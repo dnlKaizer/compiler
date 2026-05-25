@@ -7,6 +7,7 @@ import br.com.comcet.tp1.ast.command.BlockCommand;
 import br.com.comcet.tp1.ast.command.IfCommand;
 import br.com.comcet.tp1.ast.command.PrintCommand;
 import br.com.comcet.tp1.ast.command.WhileCommand;
+import br.com.comcet.tp1.ast.declaration.SubroutineDeclarations;
 import br.com.comcet.tp1.ast.declaration.VariableDeclaration;
 import br.com.comcet.tp1.ast.declaration.VariableDeclarations;
 import br.com.comcet.tp1.ast.expression.BinaryExpression;
@@ -81,7 +82,8 @@ public class AstCreator {
 
         BlockCommand block = new BlockCommand(List.of(assignX, assignY, whileCommand, printY, printA, printB));
         VariableDeclarations variableDeclarations = new VariableDeclarations(List.of(varDecl, varDeclAb));
-        Program program = new Program(variableDeclarations, block);
+        SubroutineDeclarations subroutinesDeclarations = new SubroutineDeclarations(1, 1, List.of());
+        Program program = new Program(variableDeclarations, subroutinesDeclarations, block);
 
         return program;
     }

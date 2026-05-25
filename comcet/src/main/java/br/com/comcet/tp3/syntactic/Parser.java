@@ -3,7 +3,8 @@ package br.com.comcet.tp3.syntactic;
 import java.util.List;
 import java.util.Stack;
 
-import br.com.comcet.tp1.ast.command.Command;
+import br.com.comcet.tp1.ast.command.BlockCommand;
+import br.com.comcet.tp1.ast.declaration.SubroutineDeclarations;
 import br.com.comcet.tp1.ast.declaration.VariableDeclaration;
 import br.com.comcet.tp1.ast.declaration.VariableDeclarations;
 import br.com.comcet.tp1.ast.program.Program;
@@ -36,11 +37,14 @@ public class Parser {
 
         List<VariableDeclaration> vars = VariableDeclarationParser.parseVariableDeclarations(input);
         VariableDeclarations variableDeclarations = new VariableDeclarations(varsLine, varsColumn, vars);
-        Command command = CommandParser.parseCommand(input);
+        BlockCommand command = (BlockCommand) CommandParser.parseCommand(input);
 
         input.match(TokenType.EOF);
 
-        return new Program(1, 1, variableDeclarations, command, programName, createExceptionStack());
+        // Não permite sub-rotinas por enquanto, então cria uma lista vazia
+        SubroutineDeclarations subroutinesDeclarations = new SubroutineDeclarations(1, 1, List.of());
+
+        return new Program(1, 1, variableDeclarations, subroutinesDeclarations, command, programName, createExceptionStack());
     }
 
     private static Stack<CompilerException> createExceptionStack() {

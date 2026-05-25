@@ -32,7 +32,7 @@ public class BlockCommand extends Command {
         StringBuilder sb = new StringBuilder();
         sb.append("begin").append(br);
         for (int i = 0; i < commands.size(); i++) {
-            sb.append(IndentationUtil.indentCommand(commands.get(i))).append(br);
+            sb.append(IndentationUtil.indentCommand(commands.get(i))).append(";").append(br);
         }
         sb.append("end");
 

@@ -5,6 +5,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import br.com.comcet.tp0.TextStatistics;
 import br.com.comcet.tp0.TextStatisticsCalculator;
 import br.com.comcet.tp1.ast.AstCreator;
+import br.com.comcet.tp1.ast.AstNode;
+import br.com.comcet.tp1.ast.program.Program;
 import br.com.comcet.tp1.token.Token;
 import br.com.comcet.tp1.token.TokenType;
 import br.com.comcet.tp2.scanner.Lexer;
@@ -12,11 +14,13 @@ import br.com.comcet.tp2.scanner.charstream.StringCharStream;
 import br.com.comcet.tp3.syntactic.Parser;
 import br.com.comcet.tp4.MiniPascalAntlrVisitor;
 import br.com.comcet.tp4.ParseTreeCreator;
+import br.com.comcet.tp5.exception.SemanticExceptionQueue;
+import br.com.comcet.tp5.semantic.SemanticAnalyzer;
 import br.com.comcet.utils.TextContentProvider;
 
 public class App {
     public static void main(String[] args) {
-        testTP04(args);
+        testTP05(args);
     }
 
     public static void testTP00(String[] args) {
@@ -51,12 +55,27 @@ public class App {
         System.out.println(Parser.parseProgram(lexer));
     }
 
-    public static void testTP04(String[] args) {
+    public static AstNode testTP04(String[] args) {
         String content = TextContentProvider.getContent(args);
-        if (content == null) return;
+        if (content == null) return null;
         ParseTree tree = ParseTreeCreator.createTree(content);
         MiniPascalAntlrVisitor visitor = new MiniPascalAntlrVisitor();
-        System.out.println(visitor.visit(tree));
+        AstNode ast = visitor.visit(tree);
+        System.out.println(ast);
+        return ast;
+    }
+
+    public static void testTP05(String[] args) {
+        AstNode ast = testTP04(args);
+        if (ast == null) return;
+        SemanticAnalyzer analyzer = new SemanticAnalyzer((Program) ast);
+        SemanticExceptionQueue exceptions = analyzer.getExceptions();
+        if (exceptions.isEmpty()) return;
+        System.out.println("\nExceções semânticas:");
+        int num = 0;
+        while (!exceptions.isEmpty()) {
+            System.out.println(++num + ". " + exceptions.poll().getMessage());
+        }
     }
 
 }
