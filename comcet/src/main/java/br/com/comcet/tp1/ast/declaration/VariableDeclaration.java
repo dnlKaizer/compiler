@@ -4,11 +4,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import br.com.comcet.tp1.ast.command.Command;
 import br.com.comcet.tp1.ast.expression.Identifier;
 import br.com.comcet.tp1.ast.type.VariableType;
 
-public class VariableDeclaration extends Command {
+public class VariableDeclaration extends Declaration {
     private final List<Identifier> identifiers;
     private final VariableType type;
 
@@ -43,6 +42,7 @@ public class VariableDeclaration extends Command {
             if (i > 0) sb.append(", ");
             sb.append(identifiers.get(i).toString());
         }
+        sb.append(": ").append(type.toString()).append(";");
         return sb.toString();
     }
 

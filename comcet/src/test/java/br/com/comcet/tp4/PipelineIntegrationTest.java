@@ -22,7 +22,7 @@ public class PipelineIntegrationTest {
             "begin\n" +
             "   x := 10;\n" +
             "   active := true;\n" +
-            "end";
+            "end.";
         
         var tree = ParseTreeCreator.createTree(code);
         MiniPascalAntlrVisitor visitor = new MiniPascalAntlrVisitor();

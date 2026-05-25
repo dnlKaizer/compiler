@@ -30,7 +30,7 @@ public class VisitorCommandTest {
     @Test
     public void testIfCommand() {
         MiniPascalAntlrVisitor visitor = new MiniPascalAntlrVisitor();
-        MiniPascalParser.CommandContext ctx = ANTLRTestSetup.parseCommand("if x > 0 then x := 1; else x := 0;");
+        MiniPascalParser.CommandContext ctx = ANTLRTestSetup.parseCommand("if x > 0 then x := 1 else x := 0");
         IfCommand cmd = (IfCommand) visitor.visit(ctx);
 
         assertTrue(cmd.getCondition() instanceof BinaryExpression);
