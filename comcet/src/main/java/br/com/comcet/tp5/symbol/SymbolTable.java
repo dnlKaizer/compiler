@@ -41,4 +41,12 @@ public class SymbolTable {
         return null;
     }
 
+    public ISymbol getFromFatherScope(String name) {
+        if (scopes.size() < 2) {
+            return null; // Não há escopo pai
+        }
+        Map<String, ISymbol> fatherScope = scopes.get(scopes.size() - 2);
+        return fatherScope.get(name);
+    }
+
 }

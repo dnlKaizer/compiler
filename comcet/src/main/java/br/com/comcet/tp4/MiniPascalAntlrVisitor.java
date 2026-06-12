@@ -54,8 +54,8 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
 
     @Override
     public AstNode visitAssignmentCommand(AssignmentCommandContext ctx) {
-        int line = ctx.getStart().getLine() + 1;
-        int column = ctx.getStart().getCharPositionInLine() + 1;
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
 
         Identifier id = new Identifier(line, column, ctx.ID().getText());
         Expression expression = (Expression) visit(ctx.expression());
@@ -65,8 +65,8 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
 
     @Override
     public AstNode visitBlockCommand(BlockCommandContext ctx) {
-        int line = ctx.getStart().getLine() + 1;
-        int column = ctx.getStart().getCharPositionInLine() + 1;
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
 
         List<Command> commands = ctx.command().stream()
             .map(cmdCtx -> (Command) visit(cmdCtx))
@@ -82,8 +82,8 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
 
     @Override
     public AstNode visitIfCommand(IfCommandContext ctx) {
-        int line = ctx.getStart().getLine() + 1;
-        int column = ctx.getStart().getCharPositionInLine() + 1;
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
 
         Expression condition = (Expression) visit(ctx.expression());
         Command thenCommand = (Command) visit(ctx.command(0));
@@ -98,8 +98,8 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
 
     @Override
     public AstNode visitProgram(ProgramContext ctx) {
-        int line = ctx.getStart().getLine() + 1;
-        int column = ctx.getStart().getCharPositionInLine() + 1;
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
         
         String name = ctx.ID().getText();
 
@@ -118,8 +118,8 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
 
     @Override
     public AstNode visitRepeatCommand(RepeatCommandContext ctx) {
-        int line = ctx.getStart().getLine() + 1;
-        int column = ctx.getStart().getCharPositionInLine() + 1;
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
 
         Command body = (Command) visit(ctx.command());
         Expression condition = (Expression) visit(ctx.expression());
@@ -129,8 +129,8 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
 
     @Override
     public AstNode visitVarDeclarations(VarDeclarationsContext ctx) {
-        int line = ctx.getStart().getLine() + 1;
-        int column = ctx.getStart().getCharPositionInLine() + 1;
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
 
         List<VariableDeclaration> varDecls = ctx.varDeclaration().stream()
             .map(varCtx -> (VariableDeclaration) visit(varCtx))
@@ -141,8 +141,8 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
 
     @Override
     public AstNode visitVarDeclaration(VarDeclarationContext ctx) {
-        int line = ctx.getStart().getLine() + 1;
-        int column = ctx.getStart().getCharPositionInLine() + 1;
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
 
         List<Identifier> ids = ctx.ID().stream()
             .map(idCtx -> new Identifier(line, column, idCtx.getText()))
@@ -155,8 +155,8 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
 
     @Override
     public AstNode visitWhileCommand(WhileCommandContext ctx) {
-        int line = ctx.getStart().getLine() + 1;
-        int column = ctx.getStart().getCharPositionInLine() + 1;
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
 
         Expression condition = (Expression) visit(ctx.expression());
         Command body = (Command) visit(ctx.command());
@@ -166,8 +166,8 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
 
     @Override
     public AstNode visitSubroutineDeclarations(SubroutineDeclarationsContext ctx) {
-        int line = ctx.getStart().getLine() + 1;
-        int column = ctx.getStart().getCharPositionInLine() + 1;
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
 
         List<SubroutineDeclaration> subroutineDeclarations = ctx.subroutineDeclaration().stream()
             .map(subDeclCtx -> (SubroutineDeclaration) visit(subDeclCtx))
@@ -178,8 +178,8 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
 
     @Override
     public AstNode visitSubroutineDeclaration(SubroutineDeclarationContext ctx) {
-        int line = ctx.getStart().getLine() + 1;
-        int column = ctx.getStart().getCharPositionInLine() + 1;
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
 
         Identifier id = new Identifier(line, column, ctx.ID().getText());
 
@@ -202,8 +202,8 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
 
     @Override
     public AstNode visitParameters(ParametersContext ctx) {
-        int line = ctx.getStart().getLine() + 1;
-        int column = ctx.getStart().getCharPositionInLine() + 1;
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
 
         List<VariableDeclaration> parameters = ctx.varDeclaration().stream()
             .map(paramCtx -> (VariableDeclaration) visit(paramCtx))
@@ -214,8 +214,8 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
 
     @Override
     public AstNode visitCallCommand(CallCommandContext ctx) {
-        int line = ctx.getStart().getLine() + 1;
-        int column = ctx.getStart().getCharPositionInLine() + 1;
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
 
         Identifier id = new Identifier(line, column, ctx.ID().getText());
 
@@ -228,8 +228,8 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
 
     @Override
     public AstNode visitArguments(ArgumentsContext ctx) {
-        int line = ctx.getStart().getLine() + 1;
-        int column = ctx.getStart().getCharPositionInLine() + 1;
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
 
         List<Expression> arguments = ctx.expression().stream()
             .map(exprCtx -> (Expression) visit(exprCtx))
@@ -240,8 +240,8 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
 
     @Override
 	public AstNode visitFunctionCall(FunctionCallContext ctx) {
-        int line = ctx.getStart().getLine() + 1;
-        int column = ctx.getStart().getCharPositionInLine() + 1;
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
 
         Identifier id = new Identifier(line, column, ctx.ID().getText());
         Arguments arguments = ctx.arguments() == null ?
@@ -253,8 +253,8 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
 
 	@Override
     public AstNode visitBinaryExpr(BinaryExprContext ctx) {
-        int line = ctx.getStart().getLine() + 1;
-        int column = ctx.getStart().getCharPositionInLine() + 1;
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
 
         Expression left = (Expression) visit(ctx.left);
         OperatorType operator = OperatorType.fromString(ctx.op.getText());
@@ -265,8 +265,8 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
 
     @Override
     public AstNode visitUnaryExpr(UnaryExprContext ctx) {
-        int line = ctx.getStart().getLine() + 1;
-        int column = ctx.getStart().getCharPositionInLine() + 1;
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
 
         OperatorType operator = OperatorType.fromString(ctx.op.getText());
         Expression expression = (Expression) visit(ctx.expression());
@@ -276,32 +276,32 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
 
     @Override
     public AstNode visitIdentifier(IdentifierContext ctx) {
-        int line = ctx.getStart().getLine() + 1;
-        int column = ctx.getStart().getCharPositionInLine() + 1;
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
 
         return new Identifier(line, column, ctx.ID().getText());
     }
 
     @Override
     public AstNode visitLitBool(LitBoolContext ctx) {
-        int line = ctx.getStart().getLine() + 1;
-        int column = ctx.getStart().getCharPositionInLine() + 1;
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
 
         return new LiteralBoolean(line, column, Boolean.parseBoolean(ctx.getChild(0).getText()));
     }
 
     @Override
     public AstNode visitLitInt(LitIntContext ctx) {
-        int line = ctx.getStart().getLine() + 1;
-        int column = ctx.getStart().getCharPositionInLine() + 1;
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
 
         return new LiteralInteger(line, column, Integer.parseInt(ctx.getChild(0).getText()));
     }
 
     @Override
     public AstNode visitLitStr(LitStrContext ctx) {
-        int line = ctx.getStart().getLine() + 1;
-        int column = ctx.getStart().getCharPositionInLine() + 1;
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
         String text = ctx.getChild(0).getText();
         text = text.substring(1, text.length() - 1);
         text = text.replace("\\n", "\n")

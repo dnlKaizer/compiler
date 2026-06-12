@@ -57,6 +57,20 @@ public class SemanticAnalyzerTest {
     }
 
     @Test
+    public void testStringToIntAssignment() {
+        // Caso de teste: Atribuição inválida (int := string)
+        String code = "program ErrorIntString; \n" +
+                      "var x : integer; \n" +
+                      "begin \n" +
+                      "  x := 'Danilo'; \n" +
+                      "end.";
+        SemanticExceptionQueue exceptions = analyze(code);
+        assertFalse(exceptions.isEmpty(), "Deveria falhar ao tentar atribuir string para um inteiro");
+        SemanticException ex = exceptions.poll();
+        assertTrue(ex.getMessage().contains("é 'integer', mas expressão é do tipo 'string'"), "Mensagem: " + ex.getMessage());
+    }
+
+    @Test
     public void testFunctionMissingReturnAssignment() {
         String code = "program Error3; \n" +
                       "var discard: integer; \n" +
@@ -83,6 +97,25 @@ public class SemanticAnalyzerTest {
         assertFalse(exceptions.isEmpty(), "Deveria retornar erro de aridade da função");
         SemanticException ex = exceptions.poll();
         assertTrue(ex.getMessage().contains("Número de argumentos fornecidos (1) não corresponde"), "Mensagem: " + ex.getMessage());
+    }
+
+    @Test
+    public void testCallWithIncompatibleArgumentTypes() {
+        // Caso de teste: Chamada de função passando tipos incompatíveis nos argumentos
+        String code = "program ErrorArgsType; \n" +
+                      "var discard : integer; \n" +
+                      "procedure process(a: integer; b: boolean); \n" +
+                      "begin \n" +
+                      "  discard := a; \n" +
+                      "end; \n" +
+                      "begin \n" +
+                      "  process(true, 10); \n" + // Invertido: passou boolean no lugar de int, e int no lugar de boolean
+                      "end.";
+        SemanticExceptionQueue exceptions = analyze(code);
+        assertFalse(exceptions.isEmpty(), "Deveria falhar por tipos de argumentos incompatíveis");
+        SemanticException ex = exceptions.poll();
+        assertTrue(ex.getMessage().contains("Tipo do argumento 1 é 'boolean', mas o parâmetro é do tipo 'integer'") 
+                || ex.getMessage().contains("Tipo do argumento 2"), "Mensagem: " + ex.getMessage());
     }
 
     @Test
@@ -122,6 +155,32 @@ public class SemanticAnalyzerTest {
                       "begin discard := 1; end.";
         SemanticExceptionQueue exceptions = analyze(code);
         assertTrue(exceptions.isEmpty(), "Não deve acusar erro se a função retorna um valor corretamente");
+    }
+
+    @Test
+    public void testComplexValidFibonacci() {
+        String code = "program FibonacciComplex; \n" +
+                      "var \n" +
+                      "  result, n : integer; \n" +
+                      " \n" +
+                      "function fib(num: integer): integer; \n" +
+                      "begin \n" +
+                      "  if (num = 0) then \n" +
+                      "    fib := 0 \n" +
+                      "  else \n" +
+                      "    if (num = 1) then \n" +
+                      "      fib := 1 \n" +
+                      "    else \n" +
+                      "      fib := fib(num - 1) + fib(num - 2); \n" +
+                      "end; \n" +
+                      " \n" +
+                      "begin \n" +
+                      "  n := 10; \n" +
+                      "  result := fib(n); \n" +
+                      "end.";
+                      
+        SemanticExceptionQueue exceptions = analyze(code);
+        assertTrue(exceptions.isEmpty(), "Um programa correto calculando Fibonacci não deve gerar exceções semânticas.");
     }
 
 }

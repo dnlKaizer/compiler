@@ -1,50 +1,16 @@
-program TESTE;
+program Fatorial;
 
-var 
-    name : string;
-    number, div : integer;
-    p, q, q : boolean;
+var
+  result, n : integer;
 
-procedure teste();
+function fat(num: integer): integer;
 begin
-    while (true) do
-        begin
-            name := 'Teste';
-        end;
-end;
-
-function sum(a,b: integer; r,s: boolean): integer;
-begin
-    if (r and s or t) then number := a + b;
-end;
-
-function verify(r, s: boolean): boolean;
-begin
-    verify := 1;
+  if (num = 0) then
+    fat := 1
+  else
+    fat := num * fat(num - 1)
 end;
 
 begin
-    name := 'Danilo';
-    number := (15 + 24 - 8 - 15 * 1) * 3 / 3 - sum(15, 12, p, q);
-
-    p := true;
-    q := false;
-
-    if (p or q) then
-        begin
-            number := 123;
-        end
-    else
-        begin
-            number := 321;
-        end;
-
-    while (p) do
-        p := q;
-
-    teste();
-    sum(number, div);
-    notDeclared();
-
-    repeat p := not p until (p)
+  result := fat(5);
 end.
