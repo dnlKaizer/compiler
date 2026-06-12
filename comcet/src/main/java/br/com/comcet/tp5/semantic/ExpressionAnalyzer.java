@@ -100,6 +100,11 @@ public class ExpressionAnalyzer {
             return VariableType.ERROR;
         }
 
+        // Se for uma chamada recursiva, o símbolo do método estará no escopo pai
+        if (!(symbol instanceof MethodSymbol)) {
+            symbol = context.getSymbolFromFatherScope(identifier.getName());
+        }
+
         if (!(symbol instanceof MethodSymbol)) {
             String description = String.format("Identificador '%s' não é um método", identifier.getName());
             context.addException(new SemanticException(description, line, column));

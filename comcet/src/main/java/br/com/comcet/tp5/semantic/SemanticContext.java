@@ -39,6 +39,10 @@ public class SemanticContext {
         return symbolTable.get(name);
     }
 
+    public ISymbol getSymbolFromFatherScope(String name) {
+        return symbolTable.getFromFatherScope(name);
+    }
+
     public VariableType getSymbolType(String name) {
         ISymbol symbol = symbolTable.get(name);
         return symbol != null ? symbol.getType() : VariableType.ERROR;

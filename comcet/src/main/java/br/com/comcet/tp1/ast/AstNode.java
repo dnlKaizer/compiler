@@ -11,8 +11,8 @@ public abstract class AstNode {
     }
 
     private void validate(int line, int column) {
-        if (line < 1 || column < 1) {
-            throw new IllegalArgumentException("Linha e Coluna devem ser maiores que 0.");
+        if (line < 0 || column < 0) {
+            throw new IllegalArgumentException("Linha e Coluna devem ser maiores ou iguais a 0.");
         }
     }
 
