@@ -5,7 +5,7 @@ import java.util.List;
 import br.com.comcet.tp1.ast.command.AssignmentCommand;
 import br.com.comcet.tp1.ast.command.BlockCommand;
 import br.com.comcet.tp1.ast.command.IfCommand;
-import br.com.comcet.tp1.ast.command.PrintCommand;
+import br.com.comcet.tp1.ast.command.WriteCommand;
 import br.com.comcet.tp1.ast.command.WhileCommand;
 import br.com.comcet.tp1.ast.declaration.SubroutineDeclarations;
 import br.com.comcet.tp1.ast.declaration.VariableDeclaration;
@@ -60,7 +60,7 @@ public class AstCreator {
         AssignmentCommand assignX = new AssignmentCommand(x, l5);
         AssignmentCommand assignY = new AssignmentCommand(y, l2);
 
-        PrintCommand printX = new PrintCommand(x);
+        WriteCommand printX = new WriteCommand(x, false);
 
         BinaryExpression x_2 = new BinaryExpression(x, l2, OperatorType.MULT);
         BinaryExpression y_x_2 = new BinaryExpression(y, x_2, OperatorType.SUM);
@@ -76,9 +76,9 @@ public class AstCreator {
         BinaryExpression whileCondition = new BinaryExpression(x, l0, OperatorType.GREATER_THAN);
         WhileCommand whileCommand = new WhileCommand(whileCondition, whileBody);
 
-        PrintCommand printY = new PrintCommand(y);
-        PrintCommand printA = new PrintCommand(a);
-        PrintCommand printB = new PrintCommand(b);
+        WriteCommand printY = new WriteCommand(y, false);
+        WriteCommand printA = new WriteCommand(a, false);
+        WriteCommand printB = new WriteCommand(b, false);
 
         BlockCommand block = new BlockCommand(List.of(assignX, assignY, whileCommand, printY, printA, printB));
         VariableDeclarations variableDeclarations = new VariableDeclarations(List.of(varDecl, varDeclAb));

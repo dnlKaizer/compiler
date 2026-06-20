@@ -63,7 +63,8 @@ public enum OperatorType {
         boolean isSameType = leftType == rightType;
         return switch (this) {
             case MULT, DIV, SUM, SUB ->
-                (isSameType && rightType == VariableType.INTEGER);
+                (isSameType && rightType == VariableType.INTEGER) ||
+                (isSameType && rightType == VariableType.STRING && this == SUM);
             case AND, OR, XOR ->
                 (isSameType && rightType == VariableType.BOOLEAN);
             case EQUAL, NOT_EQUAL -> (isSameType &&
@@ -80,6 +81,13 @@ public enum OperatorType {
             case NOT, AND, OR, XOR, EQUAL, NOT_EQUAL, GREATER_THAN,
                 LESS_THAN, GREATER_EQUAL, LESS_EQUAL -> VariableType.BOOLEAN;
             default -> throw new IllegalStateException("Operador desconhecido: " + this);
+        };
+    }
+
+    public boolean isRelational() {
+        return switch (this) {
+            case EQUAL, NOT_EQUAL, GREATER_THAN, LESS_THAN, GREATER_EQUAL, LESS_EQUAL -> true;
+            default -> false;
         };
     }
 

@@ -44,6 +44,7 @@ public class DeclarationAnalyzer {
         }
 
         Identifier id = declaration.getIdentifier();
+        id.setType(declaration.getReturnType());
 
         declareSymbol(new MethodSymbol(
             id.getName(),
@@ -80,6 +81,7 @@ public class DeclarationAnalyzer {
 
     public void visitVariableDeclaration(VariableDeclaration declaration) {
         declaration.getIdentifiers().forEach((id) -> {
+            id.setType(declaration.getType());
             declareSymbol(new VariableSymbol(id.getName(), declaration.getType()));
         });
     }
