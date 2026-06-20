@@ -16,7 +16,7 @@ public class Arguments extends AstNode {
         this.arguments = arguments;
     }
 
-    public List<Expression> getArguments() {
+    public List<Expression> getExpressions() {
         return arguments;
     }
 

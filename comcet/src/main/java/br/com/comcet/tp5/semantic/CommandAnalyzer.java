@@ -20,13 +20,24 @@ public class CommandAnalyzer {
     }
 
     public void visit(Command command) {
-        if (command instanceof BlockCommand) visitBlockCommand((BlockCommand) command);
-        else if (command instanceof AssignmentCommand) visitAssignmentCommand((AssignmentCommand) command);
-        else if (command instanceof CallCommand) visitCallCommand((CallCommand) command);
-        else if (command instanceof IfCommand) visitIfCommand((IfCommand) command);
-        else if (command instanceof RepeatCommand) visitRepeatCommand((RepeatCommand) command);
-        else if (command instanceof WhileCommand) visitWhileCommand((WhileCommand) command);
-        else throw new IllegalArgumentException("Tipo de comando não suportado: " + command.getClass().getSimpleName());
+        if (command instanceof BlockCommand)
+            visitBlockCommand((BlockCommand) command);
+        else if (command instanceof AssignmentCommand)
+            visitAssignmentCommand((AssignmentCommand) command);
+        else if (command instanceof CallCommand)
+            visitCallCommand((CallCommand) command);
+        else if (command instanceof IfCommand)
+            visitIfCommand((IfCommand) command);
+        else if (command instanceof RepeatCommand)
+            visitRepeatCommand((RepeatCommand) command);
+        else if (command instanceof WhileCommand)
+            visitWhileCommand((WhileCommand) command);
+        else if (command instanceof ReadCommand)
+            visitReadCommand((ReadCommand) command);
+        else if (command instanceof WriteCommand)
+            visitWriteCommand((WriteCommand) command);
+        else
+            throw new IllegalArgumentException("Tipo de comando não suportado: " + command.getClass().getSimpleName());
     }
 
     public void visitBlockCommand(BlockCommand command) {
@@ -34,34 +45,22 @@ public class CommandAnalyzer {
     }
 
     public void visitAssignmentCommand(AssignmentCommand command) {
-        int line = command.getLine();
-        int column = command.getColumn();
+        Identifier id = command.getId();
 
-        ISymbol symbol = context.getSymbol(command.getId().getName());
-        if (symbol == null) {
-            String description = String.format("Identificador '%s' não declarado", command.getId().getName());
-            context.addException(new SemanticException(description, command.getLine(), command.getColumn()));
+        VariableSymbol varSymbol = visitVariableIdentifier(id);
+        if (varSymbol == null)
             return;
-        }
 
-        if (!(symbol instanceof VariableSymbol)) {
-            String description = String.format("Identificador '%s' não é uma variável", command.getId().getName());
-            context.addException(new SemanticException(description, line, column));
-            return;
-        }
-
-        VariableSymbol varSymbol = (VariableSymbol) symbol;
-
-        VariableType idType = expressionAnalyzer.visitIdentifier(command.getId());
-        if (idType == VariableType.ERROR) return; // Erro já reportado na análise do identificador
+        VariableType idType = varSymbol.getType();
 
         VariableType expressionType = expressionAnalyzer.visit(command.getExpression());
-        if (expressionType == VariableType.ERROR) return; // Erro já reportado na análise da expressão
+        if (expressionType == VariableType.ERROR)
+            return;
 
         if (idType != expressionType) {
             String description = String.format("Tipo do identificador '%s' é '%s', mas expressão é do tipo '%s'",
-                command.getId().getName(), idType, expressionType);
-            context.getExceptionQueue().add(new SemanticException(description, line, column));
+                    id.getName(), idType, expressionType);
+            context.addException(new SemanticException(description, command.getLine(), command.getColumn()));
         }
 
         varSymbol.initialize();
@@ -80,7 +79,8 @@ public class CommandAnalyzer {
         verifyCondition(command.getCondition(), "if", command.getLine(), command.getColumn());
 
         visit(command.getThenBranch());
-        if (command.getElseBranch() != null) visit(command.getElseBranch());
+        if (command.getElseBranch() != null)
+            visit(command.getElseBranch());
     }
 
     public void visitRepeatCommand(RepeatCommand command) {
@@ -95,14 +95,45 @@ public class CommandAnalyzer {
         visit(command.getBody());
     }
 
+    public void visitReadCommand(ReadCommand command) {
+        Identifier identifier = command.getIdentifier();
+
+        VariableSymbol varSymbol = visitVariableIdentifier(identifier);
+        if (varSymbol == null)
+            return;
+
+        varSymbol.initialize();
+    }
+
+    public void visitWriteCommand(WriteCommand command) {
+        command.getArguments().getExpressions().forEach(expressionAnalyzer::visit);
+    }
+
     private void verifyCondition(Expression condition, String commandName, int line, int column) {
         VariableType conditionType = expressionAnalyzer.visit(condition);
-        if (conditionType == VariableType.ERROR) return; // Erro já reportado na análise da condição
-        
+        if (conditionType == VariableType.ERROR)
+            return;
+
         if (conditionType != VariableType.BOOLEAN) {
-            String description = String.format("Tipo da condição do comando '%s' deve ser 'boolean', mas é '%s'", commandName, conditionType);
+            String description = String.format("Tipo da condição do comando '%s' deve ser 'boolean', mas é '%s'",
+                    commandName, conditionType);
             context.addException(new SemanticException(description, line, column));
         }
+    }
+
+    private VariableSymbol visitVariableIdentifier(Identifier identifier) {
+        VariableType type = expressionAnalyzer.visitIdentifier(identifier);
+        if (type == VariableType.ERROR)
+            return null;
+
+        ISymbol symbol = context.getSymbol(identifier.getName());
+        if (!(symbol instanceof VariableSymbol)) {
+            String description = String.format("Identificador '%s' não é uma variável", identifier.getName());
+            context.addException(new SemanticException(description, identifier.getLine(), identifier.getColumn()));
+            return null;
+        }
+
+        return (VariableSymbol) symbol;
     }
 
 }

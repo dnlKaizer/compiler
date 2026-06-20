@@ -35,17 +35,19 @@ public class ExpressionAnalyzer {
 
         VariableType left = visit(expression.getLeft());
         VariableType right = visit(expression.getRight());
-        if (left == VariableType.ERROR || right == VariableType.ERROR) return VariableType.ERROR; // Evita cascata de erros
+        if (left == VariableType.ERROR || right == VariableType.ERROR) return expression.setType(VariableType.ERROR);
 
         OperatorType operator = expression.getOperator();
 
         if (!operator.supportsBinaryOperation(left, right)) {
             String description = "Operador '" + operator + "' não é compatível com os tipos '" + left + "' e '" + right + "'";
             context.getExceptionQueue().add(new SemanticException(description, line, column));
-            return VariableType.ERROR;
+            return expression.setType(VariableType.ERROR);
         }
 
-        return operator.getReturnType();
+        if (left == VariableType.STRING) return expression.setType(VariableType.STRING);
+        
+        return expression.setType(operator.getReturnType());
     }
 
     public VariableType visitUnaryExpression(UnaryExpression expression) {
@@ -53,21 +55,22 @@ public class ExpressionAnalyzer {
         int column = expression.getColumn();
 
         VariableType operandType = visit(expression.getExpression());
-        if (operandType == VariableType.ERROR) return VariableType.ERROR; // Evita cascata de erros
+        if (operandType == VariableType.ERROR) return expression.setType(VariableType.ERROR); // Evita cascata de erros
         
         OperatorType operator = expression.getOperator();
 
         if (!operator.supportsUnaryOperation(operandType)) {
             String description = "Operador '" + operator + "' não é compatível com o tipo '" + operandType + "'";
             context.getExceptionQueue().add(new SemanticException(description, line, column));
-            return VariableType.ERROR;
+            return expression.setType(VariableType.ERROR);
         }
 
-        return operator.getReturnType();
+        return expression.setType(operator.getReturnType());
     }
 
     public VariableType visitFunctionCallExpression(FunctionCallExpression expression) {
-        return visitFunctionCall(expression.getIdentifier(), expression.getArguments(), expression.getLine(), expression.getColumn());
+        VariableType type = visitFunctionCall(expression.getIdentifier(), expression.getArguments(), expression.getLine(), expression.getColumn());
+        return expression.setType(type);
     }
 
     public VariableType visitIdentifier(Identifier identifier) {
@@ -75,21 +78,21 @@ public class ExpressionAnalyzer {
         if (type == VariableType.ERROR) {
             String description = "Identificador '" + identifier.getName() + "' não foi declarado neste escopo";
             context.getExceptionQueue().add(new SemanticException(description, identifier.getLine(), identifier.getColumn()));
-            return VariableType.ERROR; 
+            return identifier.setType(VariableType.ERROR);
         }
-        return type;
+        return identifier.setType(type);
     }
 
     public VariableType visitLiteralBoolean(LiteralBoolean literal) {
-        return VariableType.BOOLEAN;
+        return literal.getType();
     }
 
     public VariableType visitLiteralInteger(LiteralInteger literal) {
-        return VariableType.INTEGER;
+        return literal.getType();
     }
 
     public VariableType visitLiteralString(LiteralString literal) {
-        return VariableType.STRING;
+        return literal.getType();
     }
 
     public VariableType visitFunctionCall(Identifier identifier, Arguments arguments, int line, int column) {
@@ -137,7 +140,7 @@ public class ExpressionAnalyzer {
     }
 
     public List<VariableType> visitArguments(Arguments arguments) {
-        return arguments.getArguments().stream().map(this::visit).toList();
+        return arguments.getExpressions().stream().map(this::visit).toList();
     }
 
 }

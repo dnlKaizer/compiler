@@ -9,8 +9,10 @@ import br.com.comcet.tp1.ast.command.BlockCommand;
 import br.com.comcet.tp1.ast.command.CallCommand;
 import br.com.comcet.tp1.ast.command.Command;
 import br.com.comcet.tp1.ast.command.IfCommand;
+import br.com.comcet.tp1.ast.command.ReadCommand;
 import br.com.comcet.tp1.ast.command.RepeatCommand;
 import br.com.comcet.tp1.ast.command.WhileCommand;
+import br.com.comcet.tp1.ast.command.WriteCommand;
 import br.com.comcet.tp1.ast.declaration.ParametersDeclaration;
 import br.com.comcet.tp1.ast.declaration.SubroutineDeclaration;
 import br.com.comcet.tp1.ast.declaration.SubroutineDeclarations;
@@ -42,6 +44,7 @@ import br.com.comcet.tp4.MiniPascalParser.LitStrContext;
 import br.com.comcet.tp4.MiniPascalParser.ParametersContext;
 import br.com.comcet.tp4.MiniPascalParser.ParenExprContext;
 import br.com.comcet.tp4.MiniPascalParser.ProgramContext;
+import br.com.comcet.tp4.MiniPascalParser.ReadCommandContext;
 import br.com.comcet.tp4.MiniPascalParser.RepeatCommandContext;
 import br.com.comcet.tp4.MiniPascalParser.SubroutineDeclarationContext;
 import br.com.comcet.tp4.MiniPascalParser.SubroutineDeclarationsContext;
@@ -49,6 +52,7 @@ import br.com.comcet.tp4.MiniPascalParser.UnaryExprContext;
 import br.com.comcet.tp4.MiniPascalParser.VarDeclarationContext;
 import br.com.comcet.tp4.MiniPascalParser.VarDeclarationsContext;
 import br.com.comcet.tp4.MiniPascalParser.WhileCommandContext;
+import br.com.comcet.tp4.MiniPascalParser.WriteCommandContext;
 
 public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
 
@@ -137,6 +141,30 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
             .toList();
 
         return new VariableDeclarations(line, column, varDecls);
+    }
+
+    @Override
+    public AstNode visitReadCommand(ReadCommandContext ctx) {
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        Identifier identifier = new Identifier(line, column, ctx.ID().getText());
+        boolean isReadLn = ctx.getChild(0).getText().equalsIgnoreCase("readln");
+
+        return new ReadCommand(line, column, identifier, isReadLn);
+    }
+
+    @Override
+    public AstNode visitWriteCommand(WriteCommandContext ctx) {
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        boolean isWriteLn = ctx.getChild(0).getText().equalsIgnoreCase("writeln");
+        Arguments arguments = ctx.arguments() == null ?
+            new Arguments(line, column, List.of()) :
+            (Arguments) visit(ctx.arguments());
+
+        return new WriteCommand(line, column, arguments, isWriteLn);
     }
 
     @Override

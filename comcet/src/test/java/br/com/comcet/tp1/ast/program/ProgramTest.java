@@ -10,7 +10,7 @@ import br.com.comcet.tp1.ast.expression.Expression;
 import br.com.comcet.tp1.ast.expression.Identifier;
 import br.com.comcet.tp1.ast.expression.LiteralInteger;
 import br.com.comcet.tp1.ast.command.BlockCommand;
-import br.com.comcet.tp1.ast.command.PrintCommand;
+import br.com.comcet.tp1.ast.command.WriteCommand;
 import br.com.comcet.tp1.ast.command.WhileCommand;
 import br.com.comcet.tp1.ast.declaration.VariableDeclaration;
 import br.com.comcet.tp1.ast.type.OperatorType;
@@ -83,8 +83,8 @@ public class ProgramTest {
         assertTrue(body.getCommands().get(2) instanceof WhileCommand);
         
         // Quarto, quinto e sexto comandos: print y, a, b
-        assertTrue(body.getCommands().get(3) instanceof PrintCommand);
-        assertTrue(body.getCommands().get(4) instanceof PrintCommand);
-        assertTrue(body.getCommands().get(5) instanceof PrintCommand);
+        assertTrue(body.getCommands().get(3) instanceof WriteCommand);
+        assertTrue(body.getCommands().get(4) instanceof WriteCommand);
+        assertTrue(body.getCommands().get(5) instanceof WriteCommand);
     }
 }

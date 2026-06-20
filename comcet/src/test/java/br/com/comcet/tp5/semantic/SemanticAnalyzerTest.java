@@ -40,7 +40,7 @@ public class SemanticAnalyzerTest {
         SemanticExceptionQueue exceptions = analyze(code);
         assertFalse(exceptions.isEmpty(), "Deveria retornar erro de variável não declarada");
         SemanticException ex = exceptions.poll();
-        assertTrue(ex.getMessage().contains("Identificador 'y' não declarado"), "Mensagem: " + ex.getMessage());
+        assertTrue(ex.getMessage().contains("Identificador 'y' não foi declarado neste escopo"), "Mensagem: " + ex.getMessage());
     }
 
     @Test

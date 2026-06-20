@@ -1,14 +1,16 @@
 package br.com.comcet.tp1.ast.expression;
 
+import br.com.comcet.tp1.ast.type.VariableType;
 import br.com.comcet.tp1.token.Token;
 
 public class LiteralString extends Literal<String> {
     public LiteralString(int line, int column, String value) {
         super(line, column, value);
+        setType(VariableType.STRING);
     }
 
     public LiteralString(String value) {
-        super(value);
+        this(1, 1, value);
     }
 
     public static LiteralString of(Token token) {

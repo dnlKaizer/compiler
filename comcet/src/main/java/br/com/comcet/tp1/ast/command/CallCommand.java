@@ -4,8 +4,9 @@ import java.util.Objects;
 
 import br.com.comcet.tp1.ast.argument.Arguments;
 import br.com.comcet.tp1.ast.expression.Identifier;
+import br.com.comcet.tp1.ast.interfaces.IFunctionCall;
 
-public class CallCommand extends Command {
+public class CallCommand extends Command implements IFunctionCall {
     private final Identifier identifier;
     private final Arguments arguments;
 
@@ -17,10 +18,12 @@ public class CallCommand extends Command {
         this.arguments = arguments;
     }
 
+    @Override
     public Identifier getIdentifier() {
         return identifier;
     }
 
+    @Override
     public Arguments getArguments() {
         return arguments;
     }
@@ -29,9 +32,9 @@ public class CallCommand extends Command {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(identifier.toString()).append("(");
-        for (int i = 0; i < arguments.getArguments().size(); i++) {
+        for (int i = 0; i < arguments.getExpressions().size(); i++) {
             if (i > 0) sb.append(", ");
-            sb.append(arguments.getArguments().get(i).toString());
+            sb.append(arguments.getExpressions().get(i).toString());
         }
         sb.append(")");
         return sb.toString();

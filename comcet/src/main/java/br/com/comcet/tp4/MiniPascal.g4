@@ -20,7 +20,7 @@ expression:
 	| left = expression op = ('*' | '/' | 'and') right = expression # BinaryExpr
 
 	// Nível 3: Adição, subtração e or lógico
-	| left = expression op = ('+' | '-' | 'or') right = expression # BinaryExpr
+	| left = expression op = ('+' | '-' | 'or' | 'xor') right = expression # BinaryExpr
 
 	// Nível 4: Expressões relacionais e de igualdade
 	| left = expression op = ('=' | '<>' | '<' | '>' | '<=' | '>=') right = expression # BinaryExpr
@@ -38,7 +38,9 @@ command:
 	| whileCommand
 	| repeatCommand
 	| blockCommand
-	| callCommand;
+	| callCommand
+	| readCommand
+	| writeCommand;
 
 assignmentCommand: ID ':=' expression;
 blockCommand: 'begin' command (';' command)* ';'? 'end';
@@ -46,6 +48,8 @@ ifCommand: 'if' expression 'then' command ('else' command)?;
 whileCommand: 'while' expression 'do' command;
 repeatCommand: 'repeat' command 'until' expression;
 callCommand: ID '(' arguments? ')';
+readCommand: ('readln' | 'read') '(' ID ')';
+writeCommand: ('writeln' | 'write') '(' arguments ')';
 
 arguments: expression (',' expression)*;
 
@@ -55,6 +59,11 @@ BOOLEAN: 'true' | 'false';
 ID: [a-zA-Z][a-zA-Z0-9]*;
 INTEGER: [0-9]+;
 WHITESPACE: [ \t\r\n]+ -> skip;
+
+// Comentários
+COMMENT_BRACE: '{' .*? '}' -> skip;
+COMMENT_PAREN: '(*' .*? '*)' -> skip;
+
 
 STRING: '\'' ( ESCAPE | ~('\\' | '\''))* '\'';
 fragment ESCAPE: '\\' [ntr\\"];

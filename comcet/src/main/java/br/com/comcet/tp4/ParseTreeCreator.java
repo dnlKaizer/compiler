@@ -20,4 +20,16 @@ public class ParseTreeCreator {
         // 4. Iniciar a análise a partir da regra inicial 'program'
         return parser.program();
     }
+
+    public static ParseTree createTree(CharStream input) {
+        // 1. Lexer: converte caracteres em tokens
+        MiniPascalLexer lexer = new MiniPascalLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+
+        // 2. Parser: converte tokens na ParseTree
+        MiniPascalParser parser = new MiniPascalParser(tokens);
+
+        // 3. Iniciar a análise a partir da regra inicial 'program'
+        return parser.program();
+    }
 }
