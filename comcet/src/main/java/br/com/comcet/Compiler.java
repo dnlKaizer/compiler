@@ -4,13 +4,16 @@ import java.io.IOException;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import br.com.comcet.backend.bytecode.CodeGen;
 import br.com.comcet.frontend.ast.program.Program;
+import br.com.comcet.frontend.exception.AntlrErrorCollector;
 import br.com.comcet.frontend.exception.SemanticExceptionQueue;
 import br.com.comcet.frontend.parser.MiniPascalAntlrVisitor;
-import br.com.comcet.frontend.parser.ParseTreeCreator;
+import br.com.comcet.frontend.parser.MiniPascalLexer;
+import br.com.comcet.frontend.parser.MiniPascalParser;
 import br.com.comcet.frontend.semantic.SemanticAnalyzer;
 
 public class Compiler {
@@ -29,7 +32,30 @@ public class Compiler {
 
             System.out.println("LOG: Criando árvore de análise sintática...");
 
-            ParseTree tree = ParseTreeCreator.createTree(input);
+            MiniPascalLexer lexer = new MiniPascalLexer(input);
+            AntlrErrorCollector lexicalErrorCollector = new AntlrErrorCollector(true);
+            lexer.removeErrorListeners();
+            lexer.addErrorListener(lexicalErrorCollector);
+
+            MiniPascalParser parser = new MiniPascalParser(new CommonTokenStream(lexer));
+            AntlrErrorCollector syntacticErrorCollector = new AntlrErrorCollector(false);
+            parser.removeErrorListeners();
+            parser.addErrorListener(syntacticErrorCollector);
+
+            ParseTree tree = parser.program();
+            
+            if (lexicalErrorCollector.hasErrors()) {
+                System.err.println("ERRO: Erros lexicais encontrados.");
+                System.err.print(lexicalErrorCollector.getErrorMessages());
+                return;
+            }
+
+            if (syntacticErrorCollector.hasErrors()) {
+                System.err.println("ERRO: Erros sintáticos encontrados.");
+                System.err.print(syntacticErrorCollector.getErrorMessages());
+                return;
+            }
+
             MiniPascalAntlrVisitor visitor = new MiniPascalAntlrVisitor();
 
             System.out.println("LOG: Criando AST...");
@@ -37,10 +63,11 @@ public class Compiler {
 
             System.out.println("LOG: Analisando AST semanticamente...");
             SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(program);
-            SemanticExceptionQueue exceptions = semanticAnalyzer.getExceptions();
+            SemanticExceptionQueue semanticExceptions = semanticAnalyzer.getExceptions();
 
-            if (!exceptions.isEmpty()) {
-                printSemanticExceptions(exceptions);
+            if (!semanticExceptions.isEmpty()) {
+                System.err.println("ERRO: Exceções semânticas encontradas.");
+                System.err.print(semanticExceptions.getErrorMessages());
                 return;
             }
 
@@ -51,15 +78,6 @@ public class Compiler {
 
         } catch (IOException e) {
             System.err.println("ERRO: Não foi possível ler o arquivo: " + e.getMessage());
-        }
-    }
-
-    private static void printSemanticExceptions(SemanticExceptionQueue exceptions) {
-        System.out.println("ERRO: Exceções semânticas encontradas.");
-        System.out.println();
-        int num = 0;
-        while (!exceptions.isEmpty()) {
-            System.out.println((++num) + ". " + exceptions.poll().getMessage());
         }
     }
 }

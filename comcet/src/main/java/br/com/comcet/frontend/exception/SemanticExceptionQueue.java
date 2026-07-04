@@ -25,4 +25,12 @@ public class SemanticExceptionQueue {
         return null;
     }
 
+    public String getErrorMessages() {
+        StringBuilder sb = new StringBuilder();
+        for (SemanticException error : queue) {
+            sb.append(error.getMessage()).append(System.lineSeparator());
+        }
+        return sb.toString();
+    }
+
 }
