@@ -68,11 +68,26 @@ public enum OperatorType {
         };
     }
 
-    public VariableType getReturnType() {
+    public VariableType getResultType(VariableType type) {
+        if (!supportsUnaryOperation(type)) {
+            throw new IllegalArgumentException("Operação unária inválida para o tipo fornecido: " + type);
+        }
+
         return switch (this) {
-            case MULT, DIV, SUM, SUB -> VariableType.INTEGER;
-            case NOT, AND, OR, XOR, EQUAL, NOT_EQUAL, GREATER_THAN,
-                LESS_THAN, GREATER_EQUAL, LESS_EQUAL -> VariableType.BOOLEAN;
+            case NOT -> VariableType.BOOLEAN;
+            default -> throw new IllegalStateException("Operador desconhecido: " + this);
+        };
+    }
+
+    public VariableType getResultType(VariableType leftType, VariableType rightType) {
+        if (!supportsBinaryOperation(leftType, rightType)) {
+            throw new IllegalArgumentException("Operação binária inválida para os tipos fornecidos: " + leftType + ", " + rightType);
+        }
+
+        return switch (this) {
+            case MULT, DIV, SUM, SUB -> leftType; // Retorna o mesmo tipo do operando
+            case AND, OR, XOR -> VariableType.BOOLEAN;
+            case EQUAL, NOT_EQUAL, GREATER_THAN, LESS_THAN, GREATER_EQUAL, LESS_EQUAL -> VariableType.BOOLEAN;
             default -> throw new IllegalStateException("Operador desconhecido: " + this);
         };
     }

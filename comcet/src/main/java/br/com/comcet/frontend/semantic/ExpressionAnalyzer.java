@@ -47,7 +47,7 @@ public class ExpressionAnalyzer {
 
         if (left == VariableType.STRING) return expression.setType(VariableType.STRING);
         
-        return expression.setType(operator.getReturnType());
+        return expression.setType(operator.getResultType(left, right));
     }
 
     public VariableType visitUnaryExpression(UnaryExpression expression) {
@@ -65,7 +65,7 @@ public class ExpressionAnalyzer {
             return expression.setType(VariableType.ERROR);
         }
 
-        return expression.setType(operator.getReturnType());
+        return expression.setType(operator.getResultType(operandType));
     }
 
     public VariableType visitFunctionCallExpression(FunctionCallExpression expression) {
