@@ -4,7 +4,6 @@ import java.util.List;
 
 import br.com.comcet.frontend.ast.AstNode;
 import br.com.comcet.frontend.ast.NodeList;
-import br.com.comcet.frontend.ast.argument.Arguments;
 import br.com.comcet.frontend.ast.command.AssignmentCommand;
 import br.com.comcet.frontend.ast.command.BlockCommand;
 import br.com.comcet.frontend.ast.command.CallCommand;
@@ -51,7 +50,9 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
             .map(cmdCtx -> (Command) visit(cmdCtx))
             .toList();
         
-        return new BlockCommand(line, column, commands);
+        NodeList<Command> commandList = new NodeList<Command>(line, column, commands);
+        
+        return new BlockCommand(line, column, commandList);
     }
 
     @Override
@@ -130,15 +131,16 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
         return new ReadCommand(line, column, identifier, isReadLn);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public AstNode visitWriteCommand(WriteCommandContext ctx) {
         int line = ctx.getStart().getLine();
         int column = ctx.getStart().getCharPositionInLine();
 
         boolean isWriteLn = ctx.getChild(0).getText().equalsIgnoreCase("writeln");
-        Arguments arguments = ctx.arguments() == null ?
-            new Arguments(line, column, List.of()) :
-            (Arguments) visit(ctx.arguments());
+        NodeList<Expression> arguments = ctx.arguments() == null ?
+            new NodeList<Expression>(line, column, List.of()) :
+            (NodeList<Expression>) visit(ctx.arguments());
 
         return new WriteCommand(line, column, arguments, isWriteLn);
     }
@@ -217,6 +219,7 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
         return new NodeList<VariableDeclaration>(line, column, parameters);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public AstNode visitCallCommand(CallCommandContext ctx) {
         int line = ctx.getStart().getLine();
@@ -224,9 +227,9 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
 
         Identifier id = new Identifier(line, column, ctx.ID().getText());
 
-        Arguments arguments = ctx.arguments() == null ?
-            new Arguments(line, column, List.of()) :
-            (Arguments) visit(ctx.arguments());
+        NodeList<Expression> arguments = ctx.arguments() == null ?
+            new NodeList<Expression>(line, column, List.of()) :
+            (NodeList<Expression>) visit(ctx.arguments());
 
         return new CallCommand(line, column, id, arguments);
     }
@@ -240,18 +243,19 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
             .map(exprCtx -> (Expression) visit(exprCtx))
             .toList();
         
-        return new Arguments(line, column, arguments);
+        return new NodeList<Expression>(line, column, arguments);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
 	public AstNode visitFunctionCall(FunctionCallContext ctx) {
         int line = ctx.getStart().getLine();
         int column = ctx.getStart().getCharPositionInLine();
 
         Identifier id = new Identifier(line, column, ctx.ID().getText());
-        Arguments arguments = ctx.arguments() == null ?
-            new Arguments(line, column, List.of()) :
-            (Arguments) visit(ctx.arguments());
+        NodeList<Expression> arguments = ctx.arguments() == null ?
+            new NodeList<Expression>(line, column, List.of()) :
+            (NodeList<Expression>) visit(ctx.arguments());
 
         return new FunctionCallExpression(line, column, id, arguments);
 	}

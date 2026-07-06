@@ -1,5 +1,6 @@
 package br.com.comcet.frontend.ast.declaration;
 
+import java.util.List;
 import java.util.Objects;
 
 import br.com.comcet.frontend.ast.NodeList;
@@ -38,16 +39,16 @@ public class SubroutineDeclaration extends Declaration {
         return identifier;
     }
 
-    public NodeList<VariableDeclaration> getParameters() {
-        return parameters;
+    public List<VariableDeclaration> getParameters() {
+        return parameters.getItems();
     }
 
     public VariableType getReturnType() {
         return returnType;
     }
 
-    public NodeList<VariableDeclaration> getLocalVariables() {
-        return localVariables;
+    public List<VariableDeclaration> getLocalVariables() {
+        return localVariables.getItems();
     }
 
     public BlockCommand getBody() {

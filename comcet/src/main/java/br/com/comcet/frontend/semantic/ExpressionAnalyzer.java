@@ -2,7 +2,6 @@ package br.com.comcet.frontend.semantic;
 
 import java.util.List;
 
-import br.com.comcet.frontend.ast.argument.Arguments;
 import br.com.comcet.frontend.ast.expression.*;
 import br.com.comcet.frontend.exception.SemanticException;
 import br.com.comcet.frontend.semantic.symbol.ISymbol;
@@ -91,7 +90,7 @@ public class ExpressionAnalyzer implements ExpressionVisitor<VariableType> {
         return literal.setType(VariableType.STRING);
     }
 
-    public VariableType visitFunctionCall(Identifier identifier, Arguments arguments, int line, int column) {
+    public VariableType visitFunctionCall(Identifier identifier, List<Expression> arguments, int line, int column) {
         ISymbol symbol = context.getSymbol(identifier.getName());
         if (symbol == null) {
             String description = String.format("Identificador '%s' não declarado", identifier.getName());
@@ -135,8 +134,8 @@ public class ExpressionAnalyzer implements ExpressionVisitor<VariableType> {
         return methodSymbol.getType();
     }
 
-    public List<VariableType> visitArguments(Arguments arguments) {
-        return arguments.getExpressions().stream().map(expression -> expression.accept(this)).toList();
+    public List<VariableType> visitArguments(List<Expression> arguments) {
+        return arguments.stream().map(expression -> expression.accept(this)).toList();
     }
 
 }

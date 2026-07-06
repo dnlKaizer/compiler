@@ -1,5 +1,7 @@
 package br.com.comcet.backend.manager;
 
+import java.util.List;
+
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -7,7 +9,6 @@ import org.objectweb.asm.Opcodes;
 import br.com.comcet.backend.context.*;
 import br.com.comcet.backend.mapper.DescriptorMapper;
 import br.com.comcet.backend.mapper.OpcodeMapper;
-import br.com.comcet.frontend.ast.NodeList;
 import br.com.comcet.frontend.ast.declaration.VariableDeclaration;
 import br.com.comcet.frontend.ast.expression.Identifier;
 
@@ -25,7 +26,7 @@ public class VariableManager {
         variableSymbolTable.addGlobalVariable(identifier);
     }
 
-    public static void declareParameters(CodeGenContext codeGenContext, NodeList<VariableDeclaration> parameters) {
+    public static void declareParameters(CodeGenContext codeGenContext, List<VariableDeclaration> parameters) {
         codeGenContext.getVariableSymbolTable().addParameters(parameters);
     }
 

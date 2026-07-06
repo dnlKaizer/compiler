@@ -77,7 +77,7 @@ public class ExpressionCodeGen implements ExpressionVisitor<Void> {
         String returnTypeDescriptor = methodContext.getVariableSymbolTable().getGlobalVariableDescriptor(identifier);
         String jvmDescriptor = DescriptorMapper.inferFunctionCall(functionCall, returnTypeDescriptor);
 
-        functionCall.getArguments().getExpressions().forEach(expression -> expression.accept(this));
+        functionCall.getArguments().forEach(expression -> expression.accept(this));
         methodContext.getMethodVisitor().visitMethodInsn(Opcodes.INVOKESTATIC, ownerName, name, jvmDescriptor, false);
     }
 

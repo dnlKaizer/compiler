@@ -1,28 +1,29 @@
 package br.com.comcet.frontend.ast.command;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class BlockCommand extends Command {
-    private final List<Command> commands;
+import br.com.comcet.frontend.ast.NodeList;
 
-    public BlockCommand(int line, int column, List<Command> commands) {
+public class BlockCommand extends Command {
+    private final NodeList<Command> commands;
+
+    public BlockCommand(int line, int column, NodeList<Command> commands) {
         super(line, column);
 
         Objects.requireNonNull(commands, "Lista de comandos não pode ser nula.");
-        commands.forEach(command -> Objects.requireNonNull(command, "Comando na lista não pode ser nulo."));
+        commands.getItems().forEach(command -> Objects.requireNonNull(command, "Comando na lista não pode ser nulo."));
 
         this.commands = commands;
     }
 
     // Construtor para testes
-    public BlockCommand(List<Command> commands) {
+    public BlockCommand(NodeList<Command> commands) {
         this(1, 1, commands);
     }
 
     public List<Command> getCommands() {
-        return Collections.unmodifiableList(commands);
+        return commands.getItems();
     }
 
     @Override
@@ -36,9 +37,7 @@ public class BlockCommand extends Command {
 
         StringBuilder sb = new StringBuilder();
         sb.append("begin").append(br);
-        for (int i = 0; i < commands.size(); i++) {
-            sb.append(IndentationUtil.indentCommand(commands.get(i))).append(";").append(br);
-        }
+        commands.getItems().forEach(command -> sb.append(IndentationUtil.indentCommand(command)).append(";").append(br));
         sb.append("end");
 
         return sb.toString();

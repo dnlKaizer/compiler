@@ -105,7 +105,7 @@ public class CommandCodeGen implements CommandVisitor {
 
     public void visitWriteCommand(WriteCommand writeCommand) {
         String name = "print";
-        List<Expression> expressions = writeCommand.getArguments().getExpressions();
+        List<Expression> expressions = writeCommand.getArguments();
         int numExpressions = expressions.size();
         MethodVisitor methodVisitor = methodContext.getMethodVisitor();
 

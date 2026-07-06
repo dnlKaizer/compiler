@@ -4,14 +4,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import br.com.comcet.frontend.ast.argument.Arguments;
+import br.com.comcet.frontend.ast.NodeList;
 import br.com.comcet.frontend.ast.expression.Expression;
 
 public class WriteCommand extends Command {
-    private final Arguments expressions;
+    private final NodeList<Expression> expressions;
     private final boolean isNewLine;
 
-    public WriteCommand(int line, int column, Arguments expressions, boolean isNewLine) {
+    public WriteCommand(int line, int column, NodeList<Expression> expressions, boolean isNewLine) {
         super(line, column);
         Objects.requireNonNull(expressions, "Expressões não podem ser nulas.");
         this.expressions = expressions;
@@ -21,7 +21,7 @@ public class WriteCommand extends Command {
     public WriteCommand(int line, int column, Expression expression, boolean isNewLine) {
         super(line, column);
         Objects.requireNonNull(expression, "Expressão não pode ser nula.");
-        this.expressions = new Arguments(line, column, Arrays.asList(expression));
+        this.expressions = new NodeList<Expression>(line, column, Arrays.asList(expression));
         this.isNewLine = isNewLine;
     }
 
@@ -30,8 +30,8 @@ public class WriteCommand extends Command {
         this(1, 1, expression, isNewLine);
     }
 
-    public Arguments getArguments() {
-        return expressions;
+    public List<Expression> getArguments() {
+        return expressions.getItems();
     }
 
     public boolean isNewLine() {
@@ -46,7 +46,7 @@ public class WriteCommand extends Command {
     @Override
     public String toString() {
         String br = IndentationUtil.NEWLINE;
-        List<Expression> exprList = expressions.getExpressions();
+        List<Expression> exprList = expressions.getItems();
         
         StringBuilder sb = new StringBuilder();
         sb.append("write").append(isNewLine ? "ln(" : "(");

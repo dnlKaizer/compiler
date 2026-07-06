@@ -17,7 +17,7 @@ public class DescriptorMapper {
 
     public static String inferSubroutine(SubroutineDeclaration subroutineDeclaration) {
         StringBuilder descriptor = new StringBuilder("(");
-        subroutineDeclaration.getParameters().getItems().forEach(variableDeclaration -> {
+        subroutineDeclaration.getParameters().forEach(variableDeclaration -> {
             String typeDescriptor = inferType(variableDeclaration.getType());
             variableDeclaration.getIdentifiers().forEach(id -> descriptor.append(typeDescriptor));
         }); 
@@ -27,7 +27,7 @@ public class DescriptorMapper {
 
     public static String inferFunctionCall(IFunctionCall functionCall, String returnTypeDescriptor) {
         StringBuilder descriptor = new StringBuilder("(");
-        functionCall.getArguments().getExpressions().forEach(expression -> descriptor.append(inferType(expression.getType())));
+        functionCall.getArguments().forEach(expression -> descriptor.append(inferType(expression.getType())));
         descriptor.append(")").append(returnTypeDescriptor);
         return descriptor.toString();
     }

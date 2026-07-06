@@ -29,7 +29,7 @@ public class DeclarationAnalyzer {
 
     public void visitSubroutineDeclaration(SubroutineDeclaration declaration) {
         List<VariableType> paramTypes = new ArrayList<>();
-        for (VariableDeclaration varDecl : declaration.getParameters().getItems()) {
+        for (VariableDeclaration varDecl : declaration.getParameters()) {
             int numberOfIds = varDecl.getIdentifiers().size();
             for (int i = 0; i < numberOfIds; i++) {
                 paramTypes.add(varDecl.getType());
@@ -54,8 +54,8 @@ public class DeclarationAnalyzer {
             ));
         }
 
-        declaration.getParameters().getItems().forEach((varDecl) -> visitVariableDeclaration(varDecl));
-        declaration.getLocalVariables().getItems().forEach((varDecl) -> visitVariableDeclaration(varDecl));
+        declaration.getParameters().forEach((varDecl) -> visitVariableDeclaration(varDecl));
+        declaration.getLocalVariables().forEach((varDecl) -> visitVariableDeclaration(varDecl));
         this.commandAnalyzer.visitBlockCommand(declaration.getBody());
 
         if (declaration.isFunction()) {

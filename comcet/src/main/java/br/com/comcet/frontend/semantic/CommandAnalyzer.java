@@ -1,6 +1,7 @@
 package br.com.comcet.frontend.semantic;
 
-import br.com.comcet.frontend.ast.argument.Arguments;
+import java.util.List;
+
 import br.com.comcet.frontend.ast.command.*;
 import br.com.comcet.frontend.ast.expression.Expression;
 import br.com.comcet.frontend.ast.expression.Identifier;
@@ -52,7 +53,7 @@ public class CommandAnalyzer implements CommandVisitor {
         int line = command.getLine();
         int column = command.getColumn();
         Identifier identifier = command.getIdentifier();
-        Arguments arguments = command.getArguments();
+        List<Expression> arguments = command.getArguments();
 
         expressionAnalyzer.visitFunctionCall(identifier, arguments, line, column);
     }
@@ -90,7 +91,7 @@ public class CommandAnalyzer implements CommandVisitor {
     }
 
     public void visitWriteCommand(WriteCommand command) {
-        command.getArguments().getExpressions().forEach(expression -> expression.accept(expressionAnalyzer));
+        command.getArguments().forEach(expression -> expression.accept(expressionAnalyzer));
     }
 
     private void verifyCondition(Expression condition, String commandName, int line, int column) {

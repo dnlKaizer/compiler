@@ -1,11 +1,11 @@
 package br.com.comcet.backend.context;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
 import br.com.comcet.backend.mapper.DescriptorMapper;
-import br.com.comcet.frontend.ast.NodeList;
 import br.com.comcet.frontend.ast.declaration.VariableDeclaration;
 import br.com.comcet.frontend.ast.expression.Identifier;
 
@@ -43,8 +43,8 @@ public class VariableSymbolTable {
         localVariableScopes.pop();
     }
 
-    public void addParameters(NodeList<VariableDeclaration> parameters) {
-        parameters.getItems().forEach(parameter -> {
+    public void addParameters(List<VariableDeclaration> parameters) {
+        parameters.forEach(parameter -> {
             parameter.getIdentifiers().forEach(this::addLocalVariable);
         });
     }
