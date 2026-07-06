@@ -17,7 +17,7 @@ public class DescriptorMapper {
 
     public static String inferSubroutine(SubroutineDeclaration subroutineDeclaration) {
         StringBuilder descriptor = new StringBuilder("(");
-        subroutineDeclaration.getParameters().getVariableDeclarations().forEach(variableDeclaration -> {
+        subroutineDeclaration.getParameters().getItems().forEach(variableDeclaration -> {
             String typeDescriptor = inferType(variableDeclaration.getType());
             variableDeclaration.getIdentifiers().forEach(id -> descriptor.append(typeDescriptor));
         }); 

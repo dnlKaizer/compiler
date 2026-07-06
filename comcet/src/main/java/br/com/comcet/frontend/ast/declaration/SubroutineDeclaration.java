@@ -2,6 +2,7 @@ package br.com.comcet.frontend.ast.declaration;
 
 import java.util.Objects;
 
+import br.com.comcet.frontend.ast.NodeList;
 import br.com.comcet.frontend.ast.command.BlockCommand;
 import br.com.comcet.frontend.ast.command.IndentationUtil;
 import br.com.comcet.frontend.ast.expression.Identifier;
@@ -9,14 +10,14 @@ import br.com.comcet.frontend.type.VariableType;
 
 public class SubroutineDeclaration extends Declaration {
     private final Identifier identifier;
-    private final ParametersDeclaration parameters;
+    private final NodeList<VariableDeclaration> parameters;
     private final VariableType returnType;
-    private final VariableDeclarations localVariables;
+    private final NodeList<VariableDeclaration> localVariables;
     private final BlockCommand body;
 
     private final boolean isFunction;
 
-    public SubroutineDeclaration(int line, int column, Identifier identifier, ParametersDeclaration parameters, VariableType returnType, VariableDeclarations localVariables, BlockCommand body) {
+    public SubroutineDeclaration(int line, int column, Identifier identifier, NodeList<VariableDeclaration> parameters, VariableType returnType, NodeList<VariableDeclaration> localVariables, BlockCommand body) {
         super(line, column);
 
         Objects.requireNonNull(identifier, "Identificador não pode ser nulo.");
@@ -37,7 +38,7 @@ public class SubroutineDeclaration extends Declaration {
         return identifier;
     }
 
-    public ParametersDeclaration getParameters() {
+    public NodeList<VariableDeclaration> getParameters() {
         return parameters;
     }
 
@@ -45,7 +46,7 @@ public class SubroutineDeclaration extends Declaration {
         return returnType;
     }
 
-    public VariableDeclarations getLocalVariables() {
+    public NodeList<VariableDeclaration> getLocalVariables() {
         return localVariables;
     }
 

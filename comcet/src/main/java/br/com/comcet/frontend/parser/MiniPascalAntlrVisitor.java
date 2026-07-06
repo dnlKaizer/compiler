@@ -3,6 +3,7 @@ package br.com.comcet.frontend.parser;
 import java.util.List;
 
 import br.com.comcet.frontend.ast.AstNode;
+import br.com.comcet.frontend.ast.NodeList;
 import br.com.comcet.frontend.ast.argument.Arguments;
 import br.com.comcet.frontend.ast.command.AssignmentCommand;
 import br.com.comcet.frontend.ast.command.BlockCommand;
@@ -13,11 +14,8 @@ import br.com.comcet.frontend.ast.command.ReadCommand;
 import br.com.comcet.frontend.ast.command.RepeatCommand;
 import br.com.comcet.frontend.ast.command.WhileCommand;
 import br.com.comcet.frontend.ast.command.WriteCommand;
-import br.com.comcet.frontend.ast.declaration.ParametersDeclaration;
 import br.com.comcet.frontend.ast.declaration.SubroutineDeclaration;
-import br.com.comcet.frontend.ast.declaration.SubroutineDeclarations;
 import br.com.comcet.frontend.ast.declaration.VariableDeclaration;
-import br.com.comcet.frontend.ast.declaration.VariableDeclarations;
 import br.com.comcet.frontend.ast.expression.BinaryExpression;
 import br.com.comcet.frontend.ast.expression.Expression;
 import br.com.comcet.frontend.ast.expression.FunctionCallExpression;
@@ -77,6 +75,7 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
         return new IfCommand(line, column, condition, thenCommand, elseCommand);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public AstNode visitProgram(ProgramContext ctx) {
         int line = ctx.getStart().getLine();
@@ -84,13 +83,13 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
         
         String name = ctx.ID().getText();
 
-        VariableDeclarations varDecls = ctx.varDeclarations() != null
-            ? (VariableDeclarations) visit(ctx.varDeclarations())
-            : new VariableDeclarations(line, column, List.of());
+        NodeList<VariableDeclaration> varDecls = ctx.varDeclarations() != null
+            ? (NodeList<VariableDeclaration>) visit(ctx.varDeclarations())
+            : new NodeList<VariableDeclaration>(line, column, List.of());
         
-        SubroutineDeclarations subroutinesDecls = ctx.subroutineDeclarations() != null
-            ? (SubroutineDeclarations) visit(ctx.subroutineDeclarations())
-            : new SubroutineDeclarations(line, column, List.of());
+        NodeList<SubroutineDeclaration> subroutinesDecls = ctx.subroutineDeclarations() != null
+            ? (NodeList<SubroutineDeclaration>) visit(ctx.subroutineDeclarations())
+            : new NodeList<SubroutineDeclaration>(line, column, List.of());
         
         BlockCommand block = (BlockCommand) visit(ctx.blockCommand());
 
@@ -117,7 +116,7 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
             .map(varCtx -> (VariableDeclaration) visit(varCtx))
             .toList();
 
-        return new VariableDeclarations(line, column, varDecls);
+        return new NodeList<VariableDeclaration>(line, column, varDecls);
     }
 
     @Override
@@ -178,9 +177,10 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
             .map(subDeclCtx -> (SubroutineDeclaration) visit(subDeclCtx))
             .toList();
         
-        return new SubroutineDeclarations(line, column, subroutineDeclarations);
+        return new NodeList<SubroutineDeclaration>(line, column, subroutineDeclarations);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public AstNode visitSubroutineDeclaration(SubroutineDeclarationContext ctx) {
         int line = ctx.getStart().getLine();
@@ -188,17 +188,17 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
 
         Identifier id = new Identifier(line, column, ctx.ID().getText());
 
-        ParametersDeclaration parameters = ctx.parameters() != null
-            ? (ParametersDeclaration) visit(ctx.parameters())
-            : new ParametersDeclaration(line, column, List.of());
+        NodeList<VariableDeclaration> parameters = ctx.parameters() != null
+            ? (NodeList<VariableDeclaration>) visit(ctx.parameters())
+            : new NodeList<VariableDeclaration>(line, column, List.of());
 
         VariableType returnType = ctx.VAR_TYPE() != null
             ? VariableType.fromString(ctx.VAR_TYPE().getText())
             : VariableType.VOID;
 
-        VariableDeclarations localVars = ctx.varDeclarations() != null
-            ? (VariableDeclarations) visit(ctx.varDeclarations())
-            : new VariableDeclarations(line, column, List.of());
+        NodeList<VariableDeclaration> localVars = ctx.varDeclarations() != null
+            ? (NodeList<VariableDeclaration>) visit(ctx.varDeclarations())
+            : new NodeList<VariableDeclaration>(line, column, List.of());
 
         BlockCommand body = (BlockCommand) visit(ctx.blockCommand());
 
@@ -214,7 +214,7 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
             .map(paramCtx -> (VariableDeclaration) visit(paramCtx))
             .toList();
 
-        return new ParametersDeclaration(line, column, parameters);
+        return new NodeList<VariableDeclaration>(line, column, parameters);
     }
 
     @Override

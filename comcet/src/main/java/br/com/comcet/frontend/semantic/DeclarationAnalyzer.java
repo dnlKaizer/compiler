@@ -22,21 +22,14 @@ public class DeclarationAnalyzer {
     }
 
     public void visit(Declaration declaration) {
-        if (declaration instanceof ParametersDeclaration) visitParametersDeclaration((ParametersDeclaration) declaration);
-        else if (declaration instanceof SubroutineDeclaration) visitSubroutineDeclaration((SubroutineDeclaration) declaration);
-        else if (declaration instanceof SubroutineDeclarations) visitSubroutineDeclarations((SubroutineDeclarations) declaration);
+        if (declaration instanceof SubroutineDeclaration) visitSubroutineDeclaration((SubroutineDeclaration) declaration);
         else if (declaration instanceof VariableDeclaration) visitVariableDeclaration((VariableDeclaration) declaration);
-        else if (declaration instanceof VariableDeclarations) visitVariableDeclarations((VariableDeclarations) declaration);
         else throw new IllegalArgumentException("Tipo de declaração não suportado: " + declaration.getClass().getSimpleName());
-    }
-
-    public void visitParametersDeclaration(ParametersDeclaration declaration) {
-        declaration.getVariableDeclarations().forEach(this::visitVariableDeclaration);
     }
 
     public void visitSubroutineDeclaration(SubroutineDeclaration declaration) {
         List<VariableType> paramTypes = new ArrayList<>();
-        for (VariableDeclaration varDecl : declaration.getParameters().getVariableDeclarations()) {
+        for (VariableDeclaration varDecl : declaration.getParameters().getItems()) {
             int numberOfIds = varDecl.getIdentifiers().size();
             for (int i = 0; i < numberOfIds; i++) {
                 paramTypes.add(varDecl.getType());
@@ -61,10 +54,8 @@ public class DeclarationAnalyzer {
             ));
         }
 
-        this.visitParametersDeclaration(declaration.getParameters());
-        declaration.getLocalVariables().getVariableDeclarations().forEach((varDecl) -> {
-            visitVariableDeclaration(varDecl);
-        });
+        declaration.getParameters().getItems().forEach((varDecl) -> visitVariableDeclaration(varDecl));
+        declaration.getLocalVariables().getItems().forEach((varDecl) -> visitVariableDeclaration(varDecl));
         this.commandAnalyzer.visitBlockCommand(declaration.getBody());
 
         if (declaration.isFunction()) {
@@ -75,19 +66,11 @@ public class DeclarationAnalyzer {
         this.context.exitScope();
     }
 
-    public void visitSubroutineDeclarations(SubroutineDeclarations declarations) {
-        declarations.getSubroutineDeclarations().forEach(this::visitSubroutineDeclaration);
-    }
-
     public void visitVariableDeclaration(VariableDeclaration declaration) {
         declaration.getIdentifiers().forEach((id) -> {
             id.setType(declaration.getType());
             declareSymbol(new VariableSymbol(id.getName(), declaration.getType()));
         });
-    }
-
-    public void visitVariableDeclarations(VariableDeclarations declarations) {
-        declarations.getVariableDeclarations().forEach(this::visitVariableDeclaration);
     }
 
     private void declareSymbol(ISymbol symbol) {

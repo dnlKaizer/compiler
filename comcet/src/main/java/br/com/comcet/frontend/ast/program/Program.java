@@ -4,21 +4,22 @@ import java.util.Objects;
 import java.util.Stack;
 
 import br.com.comcet.frontend.ast.AstNode;
+import br.com.comcet.frontend.ast.NodeList;
 import br.com.comcet.frontend.ast.command.BlockCommand;
 import br.com.comcet.frontend.ast.command.IndentationUtil;
-import br.com.comcet.frontend.ast.declaration.SubroutineDeclarations;
-import br.com.comcet.frontend.ast.declaration.VariableDeclarations;
+import br.com.comcet.frontend.ast.declaration.SubroutineDeclaration;
+import br.com.comcet.frontend.ast.declaration.VariableDeclaration;
 import br.com.comcet.frontend.exception.CompilerException;
 
 public class Program extends AstNode {
-    private final VariableDeclarations variableDeclarations;
-    private final SubroutineDeclarations subroutineDeclarations;
+    private final NodeList<VariableDeclaration> variableDeclarations;
+    private final NodeList<SubroutineDeclaration> subroutineDeclarations;
     private final BlockCommand body;
     private final String name;
     private final Stack<CompilerException> stack;
 
-    public Program(int line, int column, VariableDeclarations variableDeclarations,
-            SubroutineDeclarations subroutineDeclarations, BlockCommand body, String name, Stack<CompilerException> stack) {
+    public Program(int line, int column, NodeList<VariableDeclaration> variableDeclarations,
+            NodeList<SubroutineDeclaration> subroutineDeclarations, BlockCommand body, String name, Stack<CompilerException> stack) {
         super(line, column);
 
         Objects.requireNonNull(variableDeclarations, "Lista de declarações não pode ser nula.");
@@ -33,15 +34,15 @@ public class Program extends AstNode {
     }
 
     // Construtor para testes
-    public Program(VariableDeclarations variableDeclarations, SubroutineDeclarations subroutineDeclarations, BlockCommand body) {
+    public Program(NodeList<VariableDeclaration> variableDeclarations, NodeList<SubroutineDeclaration> subroutineDeclarations, BlockCommand body) {
         this(1, 1, variableDeclarations, subroutineDeclarations, body, "UnnamedProgram", null);
     }
 
-    public VariableDeclarations getDeclarations() {
+    public NodeList<VariableDeclaration> getDeclarations() {
         return variableDeclarations;
     }
 
-    public SubroutineDeclarations getSubroutineDeclarations() {
+    public NodeList<SubroutineDeclaration> getSubroutineDeclarations() {
         return subroutineDeclarations;
     }
 

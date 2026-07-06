@@ -34,8 +34,8 @@ public class CodeGen {
         CodeGenContext codeGenContext = new CodeGenContext(classWriter, variableSymbolTable, className);
 
         DeclarationCodeGen declarationCodeGen = new DeclarationCodeGen(codeGenContext);
-        declarationCodeGen.generateGlobalVariableDeclarations(program.getDeclarations());
-        declarationCodeGen.generateSubroutineDeclarations(program.getSubroutineDeclarations());
+        program.getDeclarations().getItems().forEach(decl -> declarationCodeGen.generateGlobalVariableDeclaration(decl));
+        program.getSubroutineDeclarations().getItems().forEach(subDecl -> declarationCodeGen.generateSubroutineDeclaration(subDecl));
 
         MethodVisitor main = SubroutineManager.startMain(classWriter);
 

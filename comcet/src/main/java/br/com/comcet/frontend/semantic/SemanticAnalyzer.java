@@ -20,8 +20,8 @@ public class SemanticAnalyzer {
     }
 
     private void visit(Program program) {
-        declarationAnalyzer.visitVariableDeclarations(program.getDeclarations());
-        declarationAnalyzer.visitSubroutineDeclarations(program.getSubroutineDeclarations());
+        program.getDeclarations().getItems().forEach(decl -> declarationAnalyzer.visit(decl));
+        program.getSubroutineDeclarations().getItems().forEach(subDecl -> declarationAnalyzer.visit(subDecl));
         commandAnalyzer.visitBlockCommand(program.getBody());
     }
 

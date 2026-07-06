@@ -7,7 +7,8 @@ import org.objectweb.asm.Opcodes;
 import br.com.comcet.backend.context.*;
 import br.com.comcet.backend.mapper.DescriptorMapper;
 import br.com.comcet.backend.mapper.OpcodeMapper;
-import br.com.comcet.frontend.ast.declaration.ParametersDeclaration;
+import br.com.comcet.frontend.ast.NodeList;
+import br.com.comcet.frontend.ast.declaration.VariableDeclaration;
 import br.com.comcet.frontend.ast.expression.Identifier;
 
 public class VariableManager {
@@ -24,7 +25,7 @@ public class VariableManager {
         variableSymbolTable.addGlobalVariable(identifier);
     }
 
-    public static void declareParameters(CodeGenContext codeGenContext, ParametersDeclaration parameters) {
+    public static void declareParameters(CodeGenContext codeGenContext, NodeList<VariableDeclaration> parameters) {
         codeGenContext.getVariableSymbolTable().addParameters(parameters);
     }
 

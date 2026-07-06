@@ -5,7 +5,8 @@ import java.util.Map;
 import java.util.Stack;
 
 import br.com.comcet.backend.mapper.DescriptorMapper;
-import br.com.comcet.frontend.ast.declaration.ParametersDeclaration;
+import br.com.comcet.frontend.ast.NodeList;
+import br.com.comcet.frontend.ast.declaration.VariableDeclaration;
 import br.com.comcet.frontend.ast.expression.Identifier;
 
 public class VariableSymbolTable {
@@ -42,8 +43,8 @@ public class VariableSymbolTable {
         localVariableScopes.pop();
     }
 
-    public void addParameters(ParametersDeclaration parameters) {
-        parameters.getVariableDeclarations().forEach(parameter -> {
+    public void addParameters(NodeList<VariableDeclaration> parameters) {
+        parameters.getItems().forEach(parameter -> {
             parameter.getIdentifiers().forEach(this::addLocalVariable);
         });
     }
