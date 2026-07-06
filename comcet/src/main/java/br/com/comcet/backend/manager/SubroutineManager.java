@@ -38,7 +38,7 @@ public class SubroutineManager {
         if (returnType != VariableType.VOID) VariableManager.declareLocal(subroutineContext, id);
         
         DeclarationCodeGen declarationCodeGen = new DeclarationCodeGen(subroutineContext);
-        subroutineDeclaration.getLocalVariables().forEach(declarationCodeGen::generateLocalVariableDeclaration);
+        subroutineDeclaration.getLocalVariables().forEach(declarationCodeGen::visitLocalVariableDeclaration);
 
         CommandCodeGen commandCodeGen = new CommandCodeGen(subroutineContext);
         subroutineDeclaration.getBody().accept(commandCodeGen);

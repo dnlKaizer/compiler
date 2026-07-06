@@ -36,6 +36,11 @@ public class VariableDeclaration extends Declaration {
     }
 
     @Override
+    public void accept(DeclarationVisitor visitor) {
+        visitor.visitVariableDeclaration(this);
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < identifiers.size(); i++) {

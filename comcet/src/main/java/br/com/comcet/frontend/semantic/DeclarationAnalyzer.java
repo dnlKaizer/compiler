@@ -11,7 +11,7 @@ import br.com.comcet.frontend.semantic.symbol.MethodSymbol;
 import br.com.comcet.frontend.semantic.symbol.VariableSymbol;
 import br.com.comcet.frontend.type.VariableType;
 
-public class DeclarationAnalyzer {
+public class DeclarationAnalyzer implements DeclarationVisitor {
 
     private final SemanticContext context;
     private final CommandAnalyzer commandAnalyzer;
@@ -21,12 +21,7 @@ public class DeclarationAnalyzer {
         this.commandAnalyzer = commandAnalyzer;
     }
 
-    public void visit(Declaration declaration) {
-        if (declaration instanceof SubroutineDeclaration) visitSubroutineDeclaration((SubroutineDeclaration) declaration);
-        else if (declaration instanceof VariableDeclaration) visitVariableDeclaration((VariableDeclaration) declaration);
-        else throw new IllegalArgumentException("Tipo de declaração não suportado: " + declaration.getClass().getSimpleName());
-    }
-
+    @Override
     public void visitSubroutineDeclaration(SubroutineDeclaration declaration) {
         List<VariableType> paramTypes = new ArrayList<>();
         for (VariableDeclaration varDecl : declaration.getParameters()) {
@@ -66,6 +61,7 @@ public class DeclarationAnalyzer {
         this.context.exitScope();
     }
 
+    @Override
     public void visitVariableDeclaration(VariableDeclaration declaration) {
         declaration.getIdentifiers().forEach((id) -> {
             id.setType(declaration.getType());

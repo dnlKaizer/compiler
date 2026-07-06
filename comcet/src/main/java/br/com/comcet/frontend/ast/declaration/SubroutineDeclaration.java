@@ -59,6 +59,11 @@ public class SubroutineDeclaration extends Declaration {
         return isFunction;
     }
 
+    @Override
+    public void accept(DeclarationVisitor visitor) {
+        visitor.visitSubroutineDeclaration(this);
+    }
+
 	@Override
 	public String toString() {
         String br = IndentationUtil.NEWLINE;

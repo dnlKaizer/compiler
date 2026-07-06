@@ -14,19 +14,19 @@ public class DeclarationCodeGen {
         this.codeGenContext = codeGenContext;
     }
 
-    public void generateLocalVariableDeclaration(VariableDeclaration variableDeclaration) {
+    public void visitLocalVariableDeclaration(VariableDeclaration variableDeclaration) {
         variableDeclaration.getIdentifiers().forEach(identifier -> {
             VariableManager.declareLocal(codeGenContext, identifier);
         });
     }
 
-    public void generateGlobalVariableDeclaration(VariableDeclaration variableDeclaration) {
+    public void visitGlobalVariableDeclaration(VariableDeclaration variableDeclaration) {
         variableDeclaration.getIdentifiers().forEach(identifier -> {
             VariableManager.declareGlobal(codeGenContext, identifier);
         });
     }
 
-    public void generateSubroutineDeclaration(SubroutineDeclaration subroutineDeclaration) {
+    public void visitSubroutineDeclaration(SubroutineDeclaration subroutineDeclaration) {
         SubroutineManager.declareSubroutine(codeGenContext, subroutineDeclaration);
     }
 

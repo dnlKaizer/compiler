@@ -8,4 +8,6 @@ public abstract class Declaration extends AstNode {
         super(line, column);
     }
 
+    public abstract void accept(DeclarationVisitor visitor);
+
 }
