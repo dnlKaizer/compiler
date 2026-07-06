@@ -16,6 +16,11 @@ public class Identifier extends Expression {
     }
 
     @Override
+    public <R> R accept(ExpressionVisitor<R> visitor) {
+        return visitor.visitIdentifier(this);
+    }
+
+    @Override
     public String toString() {
         return name;
     }

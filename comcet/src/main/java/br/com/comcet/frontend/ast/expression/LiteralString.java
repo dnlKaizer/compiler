@@ -1,12 +1,14 @@
 package br.com.comcet.frontend.ast.expression;
 
-import br.com.comcet.frontend.type.VariableType;
-
 public class LiteralString extends Literal<String> {
 
     public LiteralString(int line, int column, String value) {
         super(line, column, value);
-        setType(VariableType.STRING);
+    }
+
+    @Override
+    public <R> R accept(ExpressionVisitor<R> visitor) {
+        return visitor.visitLiteralString(this);
     }
 
     @Override

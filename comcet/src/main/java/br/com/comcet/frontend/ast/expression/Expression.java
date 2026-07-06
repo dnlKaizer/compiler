@@ -10,6 +10,8 @@ public abstract class Expression extends AstNode {
         super(line, column);
     }
 
+    public abstract <R> R accept(ExpressionVisitor<R> visitor);
+
     public VariableType setType(VariableType type) {
         this.type = type;
         return type;

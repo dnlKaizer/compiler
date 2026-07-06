@@ -49,7 +49,7 @@ public class CommandCodeGen {
         Identifier identifier = assignmentCommand.getId();
         Expression expression = assignmentCommand.getExpression();
 
-        expressionCodeGen.generateExpression(expression);
+        expression.accept(expressionCodeGen);
 
         VariableManager.store(methodContext, identifier);
     }
@@ -59,7 +59,7 @@ public class CommandCodeGen {
     }
 
     public void generateCallCommand(CallCommand callCommand) {
-        expressionCodeGen.generateFunctionCall(callCommand);
+        expressionCodeGen.visitFunctionCall(callCommand);
         Identifier identifier = callCommand.getIdentifier();
         String jvmDescriptor = methodContext.getVariableSymbolTable().getGlobalVariableDescriptor(identifier);
         String voidDescriptor = DescriptorMapper.inferType(VariableType.VOID);
@@ -70,7 +70,7 @@ public class CommandCodeGen {
         Label elseLabel = new Label();
         Label endLabel = new Label();
 
-        expressionCodeGen.generateExpression(ifCommand.getCondition());
+        ifCommand.getCondition().accept(expressionCodeGen);
 
         methodContext.getMethodVisitor().visitJumpInsn(Opcodes.IFEQ, elseLabel);
         generateCommand(ifCommand.getThenBranch());
@@ -95,7 +95,7 @@ public class CommandCodeGen {
 
         methodContext.getMethodVisitor().visitLabel(repeatLabel);
         generateCommand(repeatCommand.getBody());
-        expressionCodeGen.generateExpression(repeatCommand.getCondition());
+        repeatCommand.getCondition().accept(expressionCodeGen);
         methodContext.getMethodVisitor().visitJumpInsn(Opcodes.IFEQ, repeatLabel);
     }
 
@@ -104,7 +104,7 @@ public class CommandCodeGen {
         Label endLabel = new Label();
 
         methodContext.getMethodVisitor().visitLabel(whileLabel);
-        expressionCodeGen.generateExpression(whileCommand.getCondition());
+        whileCommand.getCondition().accept(expressionCodeGen);
         methodContext.getMethodVisitor().visitJumpInsn(Opcodes.IFEQ, endLabel);
         generateCommand(whileCommand.getBody());
         methodContext.getMethodVisitor().visitJumpInsn(Opcodes.GOTO, whileLabel);
@@ -123,7 +123,7 @@ public class CommandCodeGen {
 
             Expression expression = expressions.get(i);
             methodVisitor.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
-            expressionCodeGen.generateExpression(expression);
+            expression.accept(expressionCodeGen);
             convertToStringIfNeeded(expression);
             methodVisitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", name, "(Ljava/lang/String;)V", false);
         }

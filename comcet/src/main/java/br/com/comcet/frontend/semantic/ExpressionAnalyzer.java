@@ -10,7 +10,7 @@ import br.com.comcet.frontend.semantic.symbol.MethodSymbol;
 import br.com.comcet.frontend.type.OperatorType;
 import br.com.comcet.frontend.type.VariableType;
 
-public class ExpressionAnalyzer {
+public class ExpressionAnalyzer implements ExpressionVisitor<VariableType> {
 
     private final SemanticContext context;
 
@@ -18,23 +18,13 @@ public class ExpressionAnalyzer {
         this.context = context;
     }
 
-    public VariableType visit(Expression expression) {
-        if (expression instanceof BinaryExpression) return visitBinaryExpression((BinaryExpression) expression);
-        else if (expression instanceof UnaryExpression) return visitUnaryExpression((UnaryExpression) expression);
-        else if (expression instanceof FunctionCallExpression) return visitFunctionCallExpression((FunctionCallExpression) expression);
-        else if (expression instanceof Identifier) return visitIdentifier((Identifier) expression);
-        else if (expression instanceof LiteralBoolean) return visitLiteralBoolean((LiteralBoolean) expression);
-        else if (expression instanceof LiteralInteger) return visitLiteralInteger((LiteralInteger) expression);
-        else if (expression instanceof LiteralString) return visitLiteralString((LiteralString) expression);
-        else throw new IllegalArgumentException("Tipo de expressão não suportado: " + expression.getClass().getSimpleName());
-    }
-
+    @Override
     public VariableType visitBinaryExpression(BinaryExpression expression) {
         int line = expression.getLine();
         int column = expression.getColumn();
 
-        VariableType left = visit(expression.getLeft());
-        VariableType right = visit(expression.getRight());
+        VariableType left = expression.getLeft().accept(this);
+        VariableType right = expression.getRight().accept(this);
         if (left == VariableType.ERROR || right == VariableType.ERROR) return expression.setType(VariableType.ERROR);
 
         OperatorType operator = expression.getOperator();
@@ -50,11 +40,12 @@ public class ExpressionAnalyzer {
         return expression.setType(operator.getResultType(left, right));
     }
 
+    @Override
     public VariableType visitUnaryExpression(UnaryExpression expression) {
         int line = expression.getLine();
         int column = expression.getColumn();
 
-        VariableType operandType = visit(expression.getExpression());
+        VariableType operandType = expression.getExpression().accept(this);
         if (operandType == VariableType.ERROR) return expression.setType(VariableType.ERROR); // Evita cascata de erros
         
         OperatorType operator = expression.getOperator();
@@ -68,11 +59,13 @@ public class ExpressionAnalyzer {
         return expression.setType(operator.getResultType(operandType));
     }
 
+    @Override
     public VariableType visitFunctionCallExpression(FunctionCallExpression expression) {
         VariableType type = visitFunctionCall(expression.getIdentifier(), expression.getArguments(), expression.getLine(), expression.getColumn());
         return expression.setType(type);
     }
 
+    @Override
     public VariableType visitIdentifier(Identifier identifier) {
         VariableType type = context.getSymbolType(identifier.getName());
         if (type == VariableType.ERROR) {
@@ -83,16 +76,19 @@ public class ExpressionAnalyzer {
         return identifier.setType(type);
     }
 
+    @Override
     public VariableType visitLiteralBoolean(LiteralBoolean literal) {
-        return literal.getType();
+        return literal.setType(VariableType.BOOLEAN);
     }
 
+    @Override
     public VariableType visitLiteralInteger(LiteralInteger literal) {
-        return literal.getType();
+        return literal.setType(VariableType.INTEGER);
     }
 
+    @Override
     public VariableType visitLiteralString(LiteralString literal) {
-        return literal.getType();
+        return literal.setType(VariableType.STRING);
     }
 
     public VariableType visitFunctionCall(Identifier identifier, Arguments arguments, int line, int column) {
@@ -140,7 +136,7 @@ public class ExpressionAnalyzer {
     }
 
     public List<VariableType> visitArguments(Arguments arguments) {
-        return arguments.getExpressions().stream().map(this::visit).toList();
+        return arguments.getExpressions().stream().map(expression -> expression.accept(this)).toList();
     }
 
 }

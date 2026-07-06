@@ -53,7 +53,7 @@ public class CommandAnalyzer {
 
         VariableType idType = varSymbol.getType();
 
-        VariableType expressionType = expressionAnalyzer.visit(command.getExpression());
+        VariableType expressionType = command.getExpression().accept(expressionAnalyzer);
         if (expressionType == VariableType.ERROR)
             return;
 
@@ -106,11 +106,11 @@ public class CommandAnalyzer {
     }
 
     public void visitWriteCommand(WriteCommand command) {
-        command.getArguments().getExpressions().forEach(expressionAnalyzer::visit);
+        command.getArguments().getExpressions().forEach(expression -> expression.accept(expressionAnalyzer));
     }
 
     private void verifyCondition(Expression condition, String commandName, int line, int column) {
-        VariableType conditionType = expressionAnalyzer.visit(condition);
+        VariableType conditionType = condition.accept(expressionAnalyzer);
         if (conditionType == VariableType.ERROR)
             return;
 

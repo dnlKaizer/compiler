@@ -7,20 +7,12 @@ import br.com.comcet.backend.context.MethodContext;
 import br.com.comcet.backend.manager.VariableManager;
 import br.com.comcet.backend.mapper.DescriptorMapper;
 import br.com.comcet.backend.mapper.OpcodeMapper;
-import br.com.comcet.frontend.ast.expression.BinaryExpression;
-import br.com.comcet.frontend.ast.expression.Expression;
-import br.com.comcet.frontend.ast.expression.FunctionCallExpression;
-import br.com.comcet.frontend.ast.expression.Identifier;
-import br.com.comcet.frontend.ast.expression.Literal;
-import br.com.comcet.frontend.ast.expression.LiteralBoolean;
-import br.com.comcet.frontend.ast.expression.LiteralInteger;
-import br.com.comcet.frontend.ast.expression.LiteralString;
-import br.com.comcet.frontend.ast.expression.UnaryExpression;
+import br.com.comcet.frontend.ast.expression.*;
 import br.com.comcet.frontend.ast.interfaces.IFunctionCall;
 import br.com.comcet.frontend.type.OperatorType;
 import br.com.comcet.frontend.type.VariableType;
 
-public class ExpressionCodeGen {
+public class ExpressionCodeGen implements ExpressionVisitor<Void> {
 
     private final MethodContext methodContext;
 
@@ -28,36 +20,29 @@ public class ExpressionCodeGen {
         this.methodContext = methodContext;
     }
 
-    public void generateExpression(Expression expression) {
-        if (expression instanceof BinaryExpression) generateBinaryExpression((BinaryExpression) expression);
-        else if (expression instanceof UnaryExpression) generateUnaryExpression((UnaryExpression) expression);
-        else if (expression instanceof FunctionCallExpression) generateFunctionCallExpression((FunctionCallExpression) expression);
-        else if (expression instanceof Identifier) generateIdentifier((Identifier) expression);
-        else if (expression instanceof Literal<?>) generateLiteral((Literal<?>) expression);
-        else throw new IllegalArgumentException("Tipo de expressão desconhecido: " + expression.getClass().getSimpleName());
-    }
-
-    public void generateBinaryExpression(BinaryExpression binaryExpression) {
-        generateExpression(binaryExpression.getLeft());
-        generateExpression(binaryExpression.getRight());
+    @Override
+    public Void visitBinaryExpression(BinaryExpression binaryExpression) {
+        binaryExpression.getLeft().accept(this);
+        binaryExpression.getRight().accept(this);
 
         if (binaryExpression.getType() == VariableType.STRING) {
             methodContext.getMethodVisitor().visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/String", "concat", "(Ljava/lang/String;)Ljava/lang/String;", false);
-            return;
+            return null;
         }
         
         OperatorType operator = binaryExpression.getOperator();
         int opcode = OpcodeMapper.inferOperator(operator);
 
         if (operator.isRelational()) {
-            generateRelationalExpression(opcode);
-            return;
+            visitRelationalExpression(opcode);
+            return null;
         }
         
         methodContext.getMethodVisitor().visitInsn(opcode);
+        return null;
     }
 
-    private void generateRelationalExpression(int opcode) {
+    private void visitRelationalExpression(int opcode) {
         Label trueLabel = new Label();
         Label endLabel = new Label();
 
@@ -69,50 +54,55 @@ public class ExpressionCodeGen {
         methodContext.getMethodVisitor().visitLabel(endLabel);
     }
 
+    @Override
     // * Só funciona pra operador NOT 
-    public void generateUnaryExpression(UnaryExpression unaryExpression) {
-        generateExpression(unaryExpression.getExpression());
+    public Void visitUnaryExpression(UnaryExpression unaryExpression) {
+        unaryExpression.getExpression().accept(this);
 
         methodContext.getMethodVisitor().visitInsn(Opcodes.ICONST_1);
         methodContext.getMethodVisitor().visitInsn(Opcodes.IXOR);
+        return null;
     }
 
-    public void generateFunctionCallExpression(FunctionCallExpression functionCallExpression) {
-        this.generateFunctionCall(functionCallExpression);
+    @Override
+    public Void visitFunctionCallExpression(FunctionCallExpression functionCallExpression) {
+        this.visitFunctionCall(functionCallExpression);
+        return null;
     }
 
-    public void generateFunctionCall(IFunctionCall functionCall) {
+    public void visitFunctionCall(IFunctionCall functionCall) {
         Identifier identifier = functionCall.getIdentifier();
         String ownerName = methodContext.getClassName();
         String name = identifier.getName();
         String returnTypeDescriptor = methodContext.getVariableSymbolTable().getGlobalVariableDescriptor(identifier);
         String jvmDescriptor = DescriptorMapper.inferFunctionCall(functionCall, returnTypeDescriptor);
 
-        functionCall.getArguments().getExpressions().forEach(this::generateExpression);
+        functionCall.getArguments().getExpressions().forEach(expression -> expression.accept(this));
         methodContext.getMethodVisitor().visitMethodInsn(Opcodes.INVOKESTATIC, ownerName, name, jvmDescriptor, false);
     }
 
-    public void generateIdentifier(Identifier identifier) {
+    @Override
+    public Void visitIdentifier(Identifier identifier) {
         VariableManager.load(methodContext, identifier);
+        return null;
     }
 
-    public void generateLiteral(Literal<?> literal) {
-        if (literal instanceof LiteralBoolean)  generateLiteralBoolean((LiteralBoolean) literal);
-        else if (literal instanceof LiteralInteger) generateLiteralInteger((LiteralInteger) literal);
-        else if (literal instanceof LiteralString) generateLiteralString((LiteralString) literal);
-        else throw new IllegalArgumentException("Tipo de literal desconhecido: " + literal.getClass().getSimpleName());
-    }
-
-    public void generateLiteralBoolean(LiteralBoolean literalBoolean) {
+    @Override
+    public Void visitLiteralBoolean(LiteralBoolean literalBoolean) {
         methodContext.getMethodVisitor().visitInsn(literalBoolean.getValue() ? Opcodes.ICONST_1 : Opcodes.ICONST_0);
+        return null;
     }
 
-    public void generateLiteralInteger(LiteralInteger literalInteger) {
+    @Override
+    public Void visitLiteralInteger(LiteralInteger literalInteger) {
         methodContext.getMethodVisitor().visitLdcInsn(literalInteger.getValue());
+        return null;
     }
 
-    public void generateLiteralString(LiteralString literalString) {
+    @Override
+    public Void visitLiteralString(LiteralString literalString) {
         methodContext.getMethodVisitor().visitLdcInsn(literalString.getValue());
+        return null;
     }
 
 }

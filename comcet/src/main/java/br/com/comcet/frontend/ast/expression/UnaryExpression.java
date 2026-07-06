@@ -32,6 +32,11 @@ public class UnaryExpression extends Expression {
     }
 
     @Override
+    public <R> R accept(ExpressionVisitor<R> visitor) {
+        return visitor.visitUnaryExpression(this);
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(operator).append(" ");

@@ -39,6 +39,11 @@ public class BinaryExpression extends Expression {
     }
 
     @Override
+    public <R> R accept(ExpressionVisitor<R> visitor) {
+        return visitor.visitBinaryExpression(this);
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         appendExpression(sb, left);

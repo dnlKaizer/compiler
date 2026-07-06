@@ -24,6 +24,11 @@ public class FunctionCallExpression extends Expression implements IFunctionCall 
     }
 
     @Override
+    public <R> R accept(ExpressionVisitor<R> visitor) {
+        return visitor.visitFunctionCallExpression(this);
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(identifier.toString()).append("(");
