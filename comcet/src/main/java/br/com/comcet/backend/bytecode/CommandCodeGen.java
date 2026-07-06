@@ -86,7 +86,7 @@ public class CommandCodeGen implements CommandVisitor {
         Label repeatLabel = new Label();
 
         methodContext.getMethodVisitor().visitLabel(repeatLabel);
-        repeatCommand.getBody().accept(this);
+        repeatCommand.getBody().forEach(cmmd -> cmmd.accept(this));
         repeatCommand.getCondition().accept(expressionCodeGen);
         methodContext.getMethodVisitor().visitJumpInsn(Opcodes.IFEQ, repeatLabel);
     }

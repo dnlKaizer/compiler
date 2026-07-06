@@ -46,7 +46,7 @@ assignmentCommand: ID ':=' expression;
 blockCommand: 'begin' command (';' command)* ';'? 'end';
 ifCommand: 'if' expression 'then' command ('else' command)?;
 whileCommand: 'while' expression 'do' command;
-repeatCommand: 'repeat' command 'until' expression;
+repeatCommand: 'repeat' command (';' command)* (';')? 'until' expression;
 callCommand: ID '(' arguments? ')';
 readCommand: ('readln' | 'read') '(' ID ')';
 writeCommand: ('writeln' | 'write') '(' arguments ')';

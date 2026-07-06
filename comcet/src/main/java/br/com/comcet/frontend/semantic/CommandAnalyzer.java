@@ -71,7 +71,7 @@ public class CommandAnalyzer implements CommandVisitor {
     public void visitRepeatCommand(RepeatCommand command) {
         verifyCondition(command.getCondition(), "repeat", command.getLine(), command.getColumn());
 
-        command.getBody().accept(this);
+        command.getBody().forEach(cmmd -> cmmd.accept(this));
     }
 
     public void visitWhileCommand(WhileCommand command) {

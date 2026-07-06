@@ -1,5 +1,6 @@
 package br.com.comcet.frontend.parser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.comcet.frontend.ast.AstNode;
@@ -102,7 +103,13 @@ public class MiniPascalAntlrVisitor extends MiniPascalBaseVisitor<AstNode> {
         int line = ctx.getStart().getLine();
         int column = ctx.getStart().getCharPositionInLine();
 
-        Command body = (Command) visit(ctx.command());
+        int size = ctx.command().size();
+        List<Command> commandList = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            commandList.add((Command) visit(ctx.command(i)));
+        }
+
+        NodeList<Command> body = new NodeList<Command>(line, column, commandList);
         Expression condition = (Expression) visit(ctx.expression());
         
         return new RepeatCommand(line, column, condition, body);
