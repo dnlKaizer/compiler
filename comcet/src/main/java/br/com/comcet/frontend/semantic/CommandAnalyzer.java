@@ -9,7 +9,7 @@ import br.com.comcet.frontend.semantic.symbol.ISymbol;
 import br.com.comcet.frontend.semantic.symbol.VariableSymbol;
 import br.com.comcet.frontend.type.VariableType;
 
-public class CommandAnalyzer {
+public class CommandAnalyzer implements CommandVisitor {
 
     private final SemanticContext context;
     private final ExpressionAnalyzer expressionAnalyzer;
@@ -19,31 +19,12 @@ public class CommandAnalyzer {
         this.expressionAnalyzer = expressionAnalyzer;
     }
 
-    public void visit(Command command) {
-        if (command instanceof BlockCommand)
-            visitBlockCommand((BlockCommand) command);
-        else if (command instanceof AssignmentCommand)
-            visitAssignmentCommand((AssignmentCommand) command);
-        else if (command instanceof CallCommand)
-            visitCallCommand((CallCommand) command);
-        else if (command instanceof IfCommand)
-            visitIfCommand((IfCommand) command);
-        else if (command instanceof RepeatCommand)
-            visitRepeatCommand((RepeatCommand) command);
-        else if (command instanceof WhileCommand)
-            visitWhileCommand((WhileCommand) command);
-        else if (command instanceof ReadCommand)
-            visitReadCommand((ReadCommand) command);
-        else if (command instanceof WriteCommand)
-            visitWriteCommand((WriteCommand) command);
-        else
-            throw new IllegalArgumentException("Tipo de comando não suportado: " + command.getClass().getSimpleName());
-    }
-
+    @Override
     public void visitBlockCommand(BlockCommand command) {
-        command.getCommands().forEach(this::visit);
+        command.getCommands().forEach(cmmd -> cmmd.accept(this));
     }
 
+    @Override
     public void visitAssignmentCommand(AssignmentCommand command) {
         Identifier id = command.getId();
 
@@ -66,6 +47,7 @@ public class CommandAnalyzer {
         varSymbol.initialize();
     }
 
+    @Override
     public void visitCallCommand(CallCommand command) {
         int line = command.getLine();
         int column = command.getColumn();
@@ -75,24 +57,26 @@ public class CommandAnalyzer {
         expressionAnalyzer.visitFunctionCall(identifier, arguments, line, column);
     }
 
+    @Override
     public void visitIfCommand(IfCommand command) {
         verifyCondition(command.getCondition(), "if", command.getLine(), command.getColumn());
 
-        visit(command.getThenBranch());
+        command.getThenBranch().accept(this);
+
         if (command.getElseBranch() != null)
-            visit(command.getElseBranch());
+            command.getElseBranch().accept(this);
     }
 
     public void visitRepeatCommand(RepeatCommand command) {
         verifyCondition(command.getCondition(), "repeat", command.getLine(), command.getColumn());
 
-        visit(command.getBody());
+        command.getBody().accept(this);
     }
 
     public void visitWhileCommand(WhileCommand command) {
         verifyCondition(command.getCondition(), "while", command.getLine(), command.getColumn());
 
-        visit(command.getBody());
+        command.getBody().accept(this);
     }
 
     public void visitReadCommand(ReadCommand command) {

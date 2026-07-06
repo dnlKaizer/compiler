@@ -26,6 +26,11 @@ public class BlockCommand extends Command {
     }
 
     @Override
+    public void accept(CommandVisitor visitor) {
+        visitor.visitBlockCommand(this);
+    }
+
+    @Override
     public String toString() {
         String br = IndentationUtil.NEWLINE;
 

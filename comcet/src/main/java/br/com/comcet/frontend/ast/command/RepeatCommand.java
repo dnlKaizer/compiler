@@ -32,6 +32,11 @@ public class RepeatCommand extends Command {
     }
 
     @Override
+    public void accept(CommandVisitor visitor) {
+        visitor.visitRepeatCommand(this);
+    }
+
+    @Override
     public String toString() {
         String br = IndentationUtil.NEWLINE;
         StringBuilder sb = new StringBuilder();

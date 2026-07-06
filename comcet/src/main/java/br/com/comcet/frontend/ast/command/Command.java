@@ -8,4 +8,6 @@ public abstract class Command extends AstNode {
         super(line, column);
     }
 
+    public abstract void accept(CommandVisitor visitor);
+
 }

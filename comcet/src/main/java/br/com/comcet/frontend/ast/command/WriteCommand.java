@@ -39,6 +39,11 @@ public class WriteCommand extends Command {
     }
 
     @Override
+    public void accept(CommandVisitor visitor) {
+        visitor.visitWriteCommand(this);
+    }
+
+    @Override
     public String toString() {
         String br = IndentationUtil.NEWLINE;
         List<Expression> exprList = expressions.getExpressions();

@@ -26,6 +26,11 @@ public class ReadCommand extends Command {
     }
 
     @Override
+    public void accept(CommandVisitor visitor) {
+        visitor.visitReadCommand(this);
+    }
+
+    @Override
     public String toString() {
         String br = IndentationUtil.NEWLINE;
         StringBuilder sb = new StringBuilder();

@@ -43,7 +43,7 @@ public class CodeGen {
         ScannerManager.instantiateScanner(mainContext);
 
         CommandCodeGen commandCodeGen = new CommandCodeGen(mainContext);
-        commandCodeGen.generateCommand(program.getBody());
+        program.getBody().accept(commandCodeGen);
         
         SubroutineManager.endMain(main);
     }

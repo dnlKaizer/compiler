@@ -29,6 +29,11 @@ public class CallCommand extends Command implements IFunctionCall {
     }
 
     @Override
+    public void accept(CommandVisitor visitor) {
+        visitor.visitCallCommand(this);
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(identifier.toString()).append("(");

@@ -39,6 +39,11 @@ public class IfCommand extends Command {
     }
 
     @Override
+    public void accept(CommandVisitor visitor) {
+        visitor.visitIfCommand(this);
+    }
+
+    @Override
     public String toString() {
         String br = IndentationUtil.NEWLINE;
 

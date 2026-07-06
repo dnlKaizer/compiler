@@ -32,6 +32,11 @@ public class WhileCommand extends Command {
     }
 
     @Override
+    public void accept(CommandVisitor visitor) {
+        visitor.visitWhileCommand(this);
+    }
+
+    @Override
     public String toString() {
         String br = IndentationUtil.NEWLINE;
         StringBuilder sb = new StringBuilder();
