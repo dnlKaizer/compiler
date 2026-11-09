@@ -47,13 +47,13 @@
         <configuration>
           <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
           <includes>
-            <include>br/com/comcet/tp4/*.g4</include>
+            <include>br/com/comcet/frontend/parser/*.g4</include>
           </includes>
           <outputDirectory>${project.build.directory}/generated-sources/antlr4</outputDirectory>
           <arguments>
             <argument>-visitor</argument>
             <argument>-package</argument>
-            <argument>br.com.comcet.tp4</argument>
+            <argument>br.com.comcet.frontend.parser</argument>
           </arguments>
         </configuration>
       </plugin>
